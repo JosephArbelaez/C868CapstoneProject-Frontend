@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  z-index:0;
 }
 
 .App-logo {
@@ -95,3 +96,22 @@
   margin: 1%;
   align-self: flex-start;
 }
+
+.photoDropbox{
+  border-style: dashed;
+}
+
+.chargeTable{
+  display: flex;
+  flex-direction: column;
+  margin: 1em;
+}
+
+.chargeTableHeader{
+  display: flex;
+}
+
+.chargeTableRow{
+  display: flex;
+}
+

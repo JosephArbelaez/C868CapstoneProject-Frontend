@@ -3,6 +3,9 @@ import AdminAccount from './AdminAccount';
 import Login from './Login';
 import UserAccount from './UserAccount';
 import BookCatalog from '../Catalog/BookCatalog';
+import Registration from './Registration';
+import UpdatePhoto from '../User/UpdatePhoto';
+import Home from '../Page/Home';
 
 const initialState = {
     userID: '',
@@ -37,6 +40,13 @@ class Page extends Component {
     toRegistration = () => {
         this.props.pageChange('registration');
     }
+
+    toLogin = () => {
+        this.props.pageChange('login');
+    }
+    toPhoto = () => {
+        this.props.pageChange('photo');
+    }
     renderSwitch(name, userID, cardNumber, url){
         switch(this.props.page){
             case 'login':
@@ -55,7 +65,9 @@ class Page extends Component {
                         name = {name}
                         userID = {userID}
                         cardNumber = {cardNumber}
-                        url={url}/>
+                        url={url}
+                        toPhoto={this.toPhoto}
+                        />
                 )
 
             case 'adminAccount':
@@ -68,11 +80,24 @@ class Page extends Component {
             
             case 'registration' :
                 return (
-                    <div>Registration</div>
+                    <Registration 
+                        toLogin = {this.toLogin}/>
                 )
-            default:
+
+                case 'photo' :
+                    return (
+                        <UpdatePhoto 
+                            url = {url}/>
+                    )
+
+            case 'home' :
                 return (
-                    <BookCatalog />
+                    <Home />
+                )
+                
+            default :
+                return (
+                    <Home />
                 )
         }
     }

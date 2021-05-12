@@ -1,3 +1,4 @@
+import { findAllByDisplayValue } from '@testing-library/dom';
 import axios from 'axios';
 import React, { Component } from 'react';
 import BookCatalog from '../Catalog/BookCatalog';
@@ -8,9 +9,13 @@ class UserAccount extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            books: []
+            books: [],
+            dropzoneActive: false,
+            file: [] 
         };
 
+        this.changePhoto = this.changePhoto.bind(this);
+        this.toPhoto = this.toPhoto.bind(this);
     };
 
     componentDidMount() {
@@ -21,6 +26,16 @@ class UserAccount extends Component {
             });
         })
     }
+
+    changePhoto() {
+        this.setState({
+            dropzoneActive:true
+        })
+    }
+
+    toPhoto = () => {
+        this.props.toPhoto();
+    }
     render() {
         return (
             <div className = "userAccountPage">
@@ -28,7 +43,11 @@ class UserAccount extends Component {
                     userID = {this.props.userID}
                     name = {this.props.name}
                     cardNumber = {this.props.cardNumber}
-                    url = {this.props.url} />
+                    dropzoneActive = {this.state.dropzoneActive}
+                    changePhoto = {this.changePhoto}
+                    file = {this.file}
+                    url = {this.props.url}
+                    toPhoto = {this.toPhoto} />
                 <BookCatalog books={this.state.books}/>
             </div>
         );

@@ -11,13 +11,8 @@ class AddPerson extends Component {
         super(props);
 
         this.state = {
-            message: "",
-            name: "",
-            cardNumber: "",
-            email: "",
-            url: "",
-            fileArray:[],
-            file: null
+            userID: 0,
+            peopleArray:[]
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -32,31 +27,8 @@ class AddPerson extends Component {
         });
     }
 
-    generateCardNumber(event) {
-        event.preventDefault();
-        axios.get(
-            `http://localhost:8080/api/v1/person/cardNumber`
-            ).then(res => {
-                var used = true;
-                while (used) {
-                    var number = Math.floor(Math.random() * 1000000000);
-                    if(res.data.includes(number)){
-                        console.log(res.data.includes(number));
-                        used = true;
-                    } else {
-                        used = false;
-                        this.setState({
-                          cardNumber : number  
-                        })
-                    }
-                }
-            })
-        }
-
-    addUser = (event) => {
+    deleteUser = (event) => {
         event.preventDefault()
-        console.log(this.state.name);
-        console.log(this.state.file);
         var bodyformData = new FormData();
         bodyformData.append('file', this.state.file);
 

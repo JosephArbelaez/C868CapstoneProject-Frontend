@@ -1,10 +1,11 @@
 import React from 'react';
+const UserCard = ({ userID, name, cardNumber, url, changePhoto, dropzoneActive, file, toPhoto}) => {
 
-const UserCard = ({ userID, name, cardNumber, url}) => {
 
     return (
         <div class ="userCard">
             <img src={url} class="userCardImage"></img>
+            <button onClick={toPhoto}><a>Change photo</a></button>
             
             <div className ="userCardDescription">
                 <h3 className = "userCardText"><b>{name}</b></h3>
