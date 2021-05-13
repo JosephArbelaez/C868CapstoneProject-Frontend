@@ -52,6 +52,7 @@ class AdminAccount extends Component {
 
         const data = this.state.data.map(elt => [elt.id, elt.type, elt.price, elt.description, elt.patron.name]);
 
+        console.log(data);
         let content = {
             startY: 50,
             head: headers,
@@ -93,8 +94,8 @@ class AdminAccount extends Component {
         console.log("AdminAccount" + id);
         var temp = this.state.data;
 
-        for (var i = 0; i < temp.length; i++){
-            if(temp[i].id == id){
+        for (var i = 0; i < temp.length; i++) {
+            if (temp[i].id == id) {
                 temp.splice(i, 1);
             }
         }
@@ -107,60 +108,63 @@ class AdminAccount extends Component {
     }
     editCharge = (id, type, price, description) => {
         var temp = this.state.data;
-        for (var i = 0; i < temp.length; i++){
-            if(temp[i].id == id) {
-                temp.type = type;
-                temp.price = price;
-                temp.description = description;
-                this.setState({
-                    data: temp
-                })
+        console.log(temp);
+        for (var i = 0; i < temp.length; i++) {
+            if (temp[i].id == id) {
+                temp[i].type = type;
+                temp[i].price = price;
+                temp[i].description = description;
             }
-            var bodyformData = new FormData();
-            bodyformData.append('file', this.state.file);
-    
-            axios.put(
-                `http://localhost:8080/api/v1/charge/`, {
-                    "id" : id,
-                    "type": type,
-                    "price": price,
-                    "description": description  
-                }
-            ).then((response) => {
-                    console.log(response);
-                    this.setState(
-                        {message:'successful'})
-                  }, (error) => {
-                    console.log(error);
-                  });
-              };
         }
-    
-    
+        this.setState({
+            data: temp
+        })
+        var bodyformData = new FormData();
+        bodyformData.append('file', this.state.file);
+
+        axios.put(
+            `http://localhost:8080/api/v1/charge/`, {
+            "id": id,
+            "type": type,
+            "price": price,
+            "description": description
+        }
+        ).then((response) => {
+            console.log(response);
+            this.setState(
+                { message: 'successful' })
+        }, (error) => {
+            console.log(error);
+        });
+    };
+
+
     changeTab = (string) => {
         this.setState({
             tab: string
         })
     }
-                render() {
-                    return (
-                        <div>
-                            <button onClick={() => this.changeTab('home')}>home</button>
-                            <button onClick={() => this.changeTab('user')}>user</button>
-                            <button onClick={() => this.changeTab('book')}>book</button>
-                            <button onClick={() => this.changeTab('charge')}>charge</button>
-                            <Tab 
-                                tab={this.state.tab} 
-                                data={this.state.data} 
-                                bookdata={this.state.bookdata} 
-                                userID={this.props.userID} 
-                                name= {this.props.name} 
-                                removeCharge={this.removeCharge}
-                                editCharge={this.editCharge}
-                                />
-                        </div>
-                    );
-                }
-        }
+    render() {
+        return (
+            <div>
+                <button onClick={() => this.changeTab('home')}>home</button>
+                <button onClick={() => this.changeTab('user')}>user</button>
+                <button onClick={() => this.changeTab('book')}>book</button>
+                <button onClick={() => this.changeTab('charge')}>charge</button>
+                <Tab
+                    tab={this.state.tab}
+                    data={this.state.data}
+                    bookdata={this.state.bookdata}
+                    userID={this.props.userID}
+                    name={this.props.name}
+                    removeCharge={this.removeCharge}
+                    editCharge={this.editCharge}
+                    exportChargePDF={this.exportChargePDF}
+                    exportBookPDF={this.exportChargePDF}
+                />
+            </div>
+        );
+    }
+}
 
-        export default AdminAccount;
+export default AdminAccount;

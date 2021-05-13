@@ -7,7 +7,7 @@ const Row = ({ id, type, price, description, patron, remove, togglePopup}) => (
     <div>{type}</div>
     <div>{price}</div>
     <div>{description}</div>
-    <div>{patron}</div>
+    <div>{patron.name}</div>
     <div className = "edit"> 
       <a onClick = {() => togglePopup(id, type, price, description, patron)}>?</a>
     </div>
@@ -121,7 +121,7 @@ class ChargeTable extends Component {
                 </label>
                 <label>
                     Patron:
-                    <input type="text" readOnly = {true} name="patron" value={this.state.patron} />
+                    <input type="text" readOnly = {true} name="patron" value={this.state.patron.name} />
                 </label>
                 <button onClick={()=> this.editCharge(this.state.id, this.state.type, this.state.price, this.state.description)}>Update</button>
             </div>

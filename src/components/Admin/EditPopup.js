@@ -1,5 +1,6 @@
 import React from 'react';
-import '../../Popup.css';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 const EditPopup = ({popup, editCharge, setType, setPrice, setDescription, id, type, price, description, patron}) =>{
     return (popup) ? (

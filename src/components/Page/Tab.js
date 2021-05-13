@@ -6,7 +6,7 @@ import ChargeTable from '../Admin/ChargeTable';
 import BookTable from '../Admin/BookTable';
 import { COLUMNS } from '../Admin/ChargeTableColumns';
 import { BOOKCOLUMNS } from '../Admin/BookTableColumns';
-const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge}) => {
+const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge,exportChargePDF,exportBookPDF}) => {
         switch (tab) {
             case 'home':
                 return (
@@ -29,7 +29,7 @@ const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge}) => 
                     <div>
                         <AddBook />
                         <BookTable columns={BOOKCOLUMNS} data={bookdata} />
-                        <button onClick={() => this.exportBookPDF()}>Generate Report</button>
+                        <button onClick={() => exportBookPDF()}>Generate Report</button>
                     </div>
                 )
 
@@ -37,7 +37,7 @@ const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge}) => 
                 return (
                     <div>
                         <ChargeTable columns={COLUMNS} data={data} removeCharge={removeCharge} editCharge={editCharge}/>
-                        <button onClick={() => this.exportChargePDF()}>Generate Report</button>
+                        <button onClick={() => exportChargePDF()}>Generate Report</button>
                     </div>
                 )
             default:
