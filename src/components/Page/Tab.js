@@ -3,10 +3,12 @@ import React from 'react';
 import AddUser from "../Admin/AddUser";
 import AddBook from "../Admin/AddBook";
 import ChargeTable from '../Admin/ChargeTable';
-import BookTable from '../Admin/BookTable';
-import { COLUMNS } from '../Admin/ChargeTableColumns';
-import { BOOKCOLUMNS } from '../Admin/BookTableColumns';
-const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge,exportChargePDF,exportBookPDF}) => {
+import BookTableChecked from '../Admin/BookTableChecked';
+import BookTableUnchecked from '../Admin/BookTableUnchecked';
+import PatronTable from '../Admin/PatronTable';
+import AdminTable from'../Admin/AdminTable';
+
+const Tab = ({ tab, userID, name, data, bookdataChecked, bookdataUnchecked, removeCharge, removeBook, editBook, editCharge,exportChargePDF,exportCheckedBookPDF, exportUncheckedBookPDF, patronData, adminData, editPatron, editAdmin, removePerson}) => {
         switch (tab) {
             case 'home':
                 return (
@@ -21,6 +23,8 @@ const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge,expor
                 return (
                     <div>
                         <AddUser userID = {userID}/>
+                        <PatronTable patronData={patronData} editPatron={editPatron} removePerson= {removePerson}/>
+                        <AdminTable adminData ={adminData} editAdmin={editAdmin} removePerson= {removePerson}/>
                     </div>
                 )
 
@@ -28,15 +32,17 @@ const Tab = ({ tab, userID, name, data, bookdata, removeCharge, editCharge,expor
                 return (
                     <div>
                         <AddBook />
-                        <BookTable columns={BOOKCOLUMNS} data={bookdata} />
-                        <button onClick={() => exportBookPDF()}>Generate Report</button>
+                        <BookTableChecked removeBook={removeBook} data={bookdataChecked} editBook={editBook}/>
+                        <BookTableUnchecked removeBook={removeBook} data={bookdataUnchecked}  editBook={editBook}/>
+                        <button onClick={() => exportCheckedBookPDF()}>Generate Checked Report</button>
+                        <button onClick={() => exportUncheckedBookPDF()}>Generate UnChecked Report</button>
                     </div>
                 )
 
             case 'charge':
                 return (
                     <div>
-                        <ChargeTable columns={COLUMNS} data={data} removeCharge={removeCharge} editCharge={editCharge}/>
+                        <ChargeTable data={data} removeCharge={removeCharge} editCharge={editCharge}/>
                         <button onClick={() => exportChargePDF()}>Generate Report</button>
                     </div>
                 )

@@ -101,17 +101,20 @@
   border-style: dashed;
 }
 
-.chargeTable{
+.table{
   display: flex;
   flex-direction: column;
   margin: 1em;
 }
 
-.chargeTableHeader{
+.tableHeader{
   display: flex;
 }
 
-.chargeTableRow{
+.tableRow{
   display: flex;
+}
+input:read-only {
+  background-color: lightgray;
 }
 

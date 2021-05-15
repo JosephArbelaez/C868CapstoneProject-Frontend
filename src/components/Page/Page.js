@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import AdminAccount from './AdminAccount';
 import Login from './Login';
 import UserAccount from './UserAccount';
-import BookCatalog from '../Catalog/BookCatalog';
 import Registration from './Registration';
 import UpdatePhoto from '../User/UpdatePhoto';
 import Home from '../Page/Home';

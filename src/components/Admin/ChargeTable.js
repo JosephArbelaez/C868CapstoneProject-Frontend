@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { Component, useState } from 'react';
 
 const Row = ({ id, type, price, description, patron, remove, togglePopup}) => (
-  <div className="chargeTableRow">
+  <div className="tableRow">
     <div>{id}</div>
     <div>{type}</div>
     <div>{price}</div>
@@ -84,8 +84,8 @@ class ChargeTable extends Component {
     const rows = this.state.chargeData.map((rowData) => <Row remove={this.remove} togglePopup={this.togglePopup} {...rowData} />);
 
     return (
-      <div className="chargeTable">
-        <div className="chargeTableHeader">
+      <div className="table">
+        <div className="tableHeader">
           <div>ID</div>
           <div>Type</div>
           <div>Price</div>

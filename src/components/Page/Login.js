@@ -27,7 +27,9 @@ class Login extends Component {
         axios.get(
             `http://localhost:8080/api/v1/person/login?email=${email}&password=${password}`
         ).then(res => {
-            this.props.login(res.data.userID, res.data.name, res.data.cardNumber, res.data.url);
+            if(res.data.userID){
+                this.props.login(res.data.userID, res.data.name, res.data.cardNumber, res.data.url);
+            }
         });
     }
 

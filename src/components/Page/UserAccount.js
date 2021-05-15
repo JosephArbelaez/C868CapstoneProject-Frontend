@@ -10,6 +10,7 @@ class UserAccount extends Component {
         super(props);
         this.state = {
             books: [],
+            bookResults: [],
             dropzoneActive: false,
             file: [] 
         };
@@ -22,7 +23,8 @@ class UserAccount extends Component {
         axios.get(`http://localhost:8080/api/v1/book`)
         .then((res) => {
             this.setState({
-                books : res.data
+                books : res.data,
+                bookResults: res.data
             });
         })
     }
@@ -33,6 +35,9 @@ class UserAccount extends Component {
         })
     }
 
+    searchBooks = (searchString) => {
+        var temp = books
+    } 
     toPhoto = () => {
         this.props.toPhoto();
     }
