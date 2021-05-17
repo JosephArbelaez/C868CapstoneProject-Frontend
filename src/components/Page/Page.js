@@ -3,7 +3,6 @@ import AdminAccount from './AdminAccount';
 import Login from './Login';
 import UserAccount from './UserAccount';
 import Registration from './Registration';
-import UpdatePhoto from '../User/UpdatePhoto';
 import Home from '../Page/Home';
 
 const initialState = {
@@ -82,12 +81,6 @@ class Page extends Component {
                     <Registration 
                         toLogin = {this.toLogin}/>
                 )
-
-                case 'photo' :
-                    return (
-                        <UpdatePhoto 
-                            url = {url}/>
-                    )
 
             case 'home' :
                 return (

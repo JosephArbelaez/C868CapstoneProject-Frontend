@@ -22,8 +22,8 @@ class Login extends Component {
     }
     login = (event) => {
         event.preventDefault()
-        const { email, password} = this.state;
-
+        var { email, password} = this.state;
+        email = email.toLowerCase();
         axios.get(
             `http://localhost:8080/api/v1/person/login?email=${email}&password=${password}`
         ).then(res => {
