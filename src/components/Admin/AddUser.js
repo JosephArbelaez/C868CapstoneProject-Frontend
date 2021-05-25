@@ -1,10 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
-import UserDropdown from '../utils/UserDropdown';
-const imageMaxSize = 1000000000 // bytes
-const acceptedFileTypes = 'image/x-png, image/png, image/jpg, image/jpeg, image/gif'
-const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => { return item.trim() })
 
 class AddPerson extends Component {
     constructor(props) {
@@ -121,7 +117,7 @@ class AddPerson extends Component {
                 )
         }
     }
-    handleOnDrop = (files, rejectedFiles) => {
+    handleOnDrop = (files) => {
         files.map(f => {
             this.setState({
                 file: f

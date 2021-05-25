@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BookCard = ({ isbn, title, author, description, pageCount, price, genre, status, url}) => {
+const BookCard = ({ isbn, title, author, description, pageCount, price, genre, status, url, reserveBook}) => {
 
     return (
         <div class ="bookCard">
@@ -12,9 +12,10 @@ const BookCard = ({ isbn, title, author, description, pageCount, price, genre, s
                     <p class = "bookCardText"><b>Description: </b></p>           
                     <p class = "bookCardText">{description}</p>
                 <p class = "bookCardText"><b>Page Count: </b>{pageCount} pages</p>
-                <p class = "bookCardText"><b>Price: </b>${price}</p>
+                <p class = "bookCardText"><b>Price: </b>${price.toFixed(2)}</p>
                 <p class = "bookCardText"><b>Genre: </b>{genre}</p>
                 <p class = "bookCardText">{status}</p>
+                <button onClick={() => reserveBook({isbn})}>Reserve</button>
             </div>
         </div>
     );

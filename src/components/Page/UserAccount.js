@@ -6,6 +6,8 @@ import BookCollection from '../User/BookCollection';
 import ChargeCard from '../User/ChargeCard';
 import UserCard from '../User/UserCard';
 
+
+
 class UserAccount extends Component {
 
     constructor(props) {
@@ -18,12 +20,12 @@ class UserAccount extends Component {
             file: [],
             charges: [],
             chargeSum: 0,
-            value: ''
+            value: '',
+            tab: "home"
         };
 
         this.handleChange = this.handleChange.bind(this);
-        this.changePhoto = this.changePhoto.bind(this);
-        this.toPhoto = this.toPhoto.bind(this);
+        this.changeTab = this.changeTab.bind(this);
     };
 
     componentDidMount() {
@@ -52,30 +54,24 @@ class UserAccount extends Component {
                 var temp = [];
                 var total = [];
                 for (var i = 0; i < res.data.length; i++) {
-                    if (res.data[i].patron) {
-                        if (res.data[i].patron.userID == this.props.userID) {
+                    if (res.data[i].person) {
+                        if (res.data[i].person.userID == this.props.userID) {
                             temp.push(res.data[i]);
                             total.push(res.data[i].price);
                         }
                     }
                 }
 
-                var sum = total.reduce(function(a, b){
+                var sum = total.reduce(function (a, b) {
                     return a + b;
                 }, 0);
-                
+
                 this.setState({
                     charges: temp,
                     chargeSum: sum.toFixed(2)
                 })
             }
             )
-    }
-
-    changePhoto() {
-        this.setState({
-            dropzoneActive: true
-        })
     }
 
     searchBooks = (event) => {
@@ -96,31 +92,81 @@ class UserAccount extends Component {
     handleChange(event) {
         this.setState({ value: event.target.value });
     }
-    toPhoto = () => {
-        this.props.toPhoto();
+
+    changeTab = (string) => {
+        this.setState({
+            tab: string
+        })
     }
 
+    reserveBook = (data) => {
+        console.log("User Account - Reserve Book");
+        console.log(data.isbn);
+        console.log(this.props.userID)
+        this.state.books.forEach((element) => {
+            if (element.isbn == data.isbn) {
+                element.status = "reserved"
+
+                axios.put(`http://localhost:8080/api/v1/book/${this.props.userID}`, {
+                    "isbn": element.isbn,
+                    "title": element.title,
+                    "author": element.author,
+                    "description": element.description,
+                    "pageCount": element.pageCount,
+                    "price": element.price,
+                    "status": element.status,
+                    "genre": element.genre,
+                    "url": element.url
+                }
+                ).then((response) => {
+                    console.log(response);
+                }, (error) => {
+                    console.log(error);
+                });
+            }
+        })
+
+
+    }
+    renderSwitch = () => {
+        switch (this.state.tab) {
+            case "home":
+                return (
+                    <div>
+
+                        <BookCollection books={this.state.bookCollection} />
+                    </div>
+                )
+            case "reserve":
+                return (
+                    <div>
+                        <form onSubmit={this.searchBooks}>
+                            <input type="text" value={this.state.value} onChange={this.handleChange} />
+                            <input type="submit" value="Submit" />
+                        </form>
+                        <BookCatalog books={this.state.bookResults} reserveBook={this.reserveBook} />
+                    </div>
+                )
+        }
+    }
     render() {
         return (
             <div className="userAccountPage">
-                <div>
+                <div className="user-fifth">
                     <UserCard
                         userID={this.props.userID}
                         name={this.props.name}
                         cardNumber={this.props.cardNumber}
-                        dropzoneActive={this.state.dropzoneActive}
-                        changePhoto={this.changePhoto}
-                        file={this.file}
-                        url={this.props.url}
-                        toPhoto={this.toPhoto} />
-                    <ChargeCard chargeTotal={this.state.chargeSum}/>
+                        url={this.props.url} />
+                    <ChargeCard chargeTotal={this.state.chargeSum} />
                 </div>
-                <form onSubmit={this.searchBooks}>
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
-                    <input type="submit" value="Submit" />
-                </form>
-                <BookCatalog books={this.state.bookResults} searchBooks={this.searchBooks} />
-                <BookCollection books={this.state.bookCollection} />
+                <div className="user-fourfifths">
+                    <div className="adminTabs">
+                        <button className="adminTabButton" onClick={() => this.changeTab("home")}>Home</button>
+                        <button className="adminTabButton" onClick={() => this.changeTab("reserve")}>Reserve</button>
+                    </div>
+                    {this.renderSwitch()}
+                </div >
             </div>
         );
     }

@@ -1,9 +1,14 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import AdminAccount from './AdminAccount';
 import Login from './Login';
 import UserAccount from './UserAccount';
 import Registration from './Registration';
 import Home from '../Page/Home';
+import Navbar from '../Navbar/Navbar';
+import NewNonFiction from './NewNonFiction';
+import NewFiction from './NewFiction';
+import Gallery from './Gallery';
+import Bar from './Bar';
 
 const initialState = {
     userID: '',
@@ -11,8 +16,11 @@ const initialState = {
     username: '',
     password: '',
     cardNumber: '',
-    url: ''
-  }
+    url: '',
+    bar1: 'Our Mission: Transforming lives by Educating, Inspiring, and Connecting',
+    bar2: 'Sign up today to hear about new programs & events!',
+    loginText: 'Login'
+}
 
 class Page extends Component {
     constructor() {
@@ -27,8 +35,8 @@ class Page extends Component {
             cardNumber: cardNumber,
             url: url
         });
-        
-        if(this.state.cardNumber === undefined) {
+
+        if (this.state.cardNumber === undefined) {
             this.props.pageChange('adminAccount');
         } else {
             this.props.pageChange('userAccount')
@@ -45,59 +53,84 @@ class Page extends Component {
     toPhoto = () => {
         this.props.pageChange('photo');
     }
-    renderSwitch(name, userID, cardNumber, url){
-        switch(this.props.page){
+    changeName = (name) => {
+        this.setState({
+            name: name
+        })
+    }
+    renderSwitch(name, userID, cardNumber, url) {
+        switch (this.props.page) {
             case 'login':
                 return (
-                    <Login 
-                        name = {name} 
-                        userID = {userID} 
-                        cardNumber = {cardNumber}
-                        url = {url} 
-                        login={this.login}
-                        toRegistration={this.toRegistration}/>
+
+                        <div className="login">
+                            <Login
+                                name={name}
+                                userID={userID}
+                                cardNumber={cardNumber}
+                                url={url}
+                                login={this.login}
+                                toRegistration={this.toRegistration} />
+                        </div>
                 )
             case 'userAccount':
                 return (
-                    <UserAccount 
-                        name = {name}
-                        userID = {userID}
-                        cardNumber = {cardNumber}
+                    <UserAccount
+                        name={name}
+                        userID={userID}
+                        cardNumber={cardNumber}
                         url={url}
                         toPhoto={this.toPhoto}
-                        />
+                    />
                 )
 
             case 'adminAccount':
                 return (
-                    <AdminAccount 
-                    name = {name}
-                    userID = {userID}
-                    cardNumber = {cardNumber}/>
-                )
-            
-            case 'registration' :
-                return (
-                    <Registration 
-                        toLogin = {this.toLogin}/>
+                    <AdminAccount
+                        changeName={this.changeName}
+                        name={name}
+                        userID={userID}
+                        url={url}/>
                 )
 
-            case 'home' :
+            case 'registration':
                 return (
-                    <Home />
+                    <div>
+                        <Registration
+                            toLogin={this.toLogin} />
+                    </div>
                 )
-                
-            default :
+
+            case 'home':
                 return (
-                    <Home />
+                    <div>
+                        <Home />
+                        <Bar text = {this.state.bar1}/>
+                        <div className="newBookCard">
+                            <NewNonFiction />
+                            <NewFiction />
+                        </div>
+                        <Bar text = {this.state.bar2}/>
+                        <div className="galleryContainer">
+                            <Gallery />
+                        </div>
+                    </div>
+                )
+
+            default:
+                return (
+                    <div>
+                        <Home />
+                    </div>
                 )
         }
     }
     render() {
-        const {userID, name, cardNumber, url} = this.state;
+        const { userID, name, cardNumber, url } = this.state;
         return (
-            <div className = "content">
-                {this.renderSwitch (name, userID, cardNumber, url)}
+            <div className="content">
+                <Navbar pageChange={this.props.pageChange} loginText={this.state.loginText}/>
+                {this.renderSwitch(name, userID, cardNumber, url)}
             </div>
         )
     }

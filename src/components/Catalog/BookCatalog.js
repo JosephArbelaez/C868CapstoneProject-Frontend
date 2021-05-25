@@ -2,7 +2,7 @@
 import React from 'react';
 import BookCard from './BookCard';
 
-const BookCatalog = ({ books }) => {
+const BookCatalog = ({ books, reserveBook }) => {
     if(books == undefined){
         return(
             <div></div>
@@ -25,7 +25,8 @@ const BookCatalog = ({ books }) => {
                             price = {book.price}
                             genre = {book.genre}
                             status = {book.status}
-                            url = {book.url}/>
+                            url = {book.url}
+                            reserveBook={reserveBook}/>
                     );
                 })
             }

@@ -37,38 +37,39 @@ class Registration extends Component {
 
     submitPassword = (event) => {
         event.preventDefault();
-        if(this.state.password){
-        axios.put(
-            `http://localhost:8080/api/v1/person/${this.state.userID}?cardNumber=${this.state.cardnumber}`, {
-            "userID": this.state.userID,
-            "name": this.state.name,
-            "email": this.state.email,
-            "password": this.state.password,
-        }).then((response) => {
-            this.toLogin();
-        }, (error) => {
-            console.log(error);
-        })
-    }
+        if (this.state.password) {
+            axios.put(
+                `http://localhost:8080/api/v1/person/patron/`, {
+                "userID": this.state.userID,
+                "name": this.state.name,
+                "email": this.state.email,
+                "password": this.state.password,
+                "cardNumber": this.state.cardnumber
+            }).then((response) => {
+                this.toLogin();
+            }, (error) => {
+                console.log(error);
+            })
+        }
     }
     renderSwitch(message) {
         switch (message) {
             case '':
                 return (
-                    <div onSubmit={this.cardnumberCheck}>
-                        <form >
+                    <div className="registrationCard" onSubmit={this.cardnumberCheck}>
+                        <form className="registrationForm">
                             <label>Card Number:
-                        <input type="text" name="cardnumber" value={this.state.cardNumber} readOnly={false} onChange={e => this.setState({ cardnumber: e.target.value })} />
+                            <input type="text" name="cardnumber" value={this.state.cardNumber} readOnly={false} onChange={e => this.setState({ cardnumber: e.target.value })} />
                             </label>
-                            <input  type="submit" value = "Enter"></input>
+                            <input type="submit" value="Enter"></input>
                         </form>
                     </div>
                 )
 
             case 'successful':
                 return (
-                    <div onSubmit={this.submitPassword}>
-                        <form >
+                    <div className="registrationCard">
+                        <form onSubmit={this.submitPassword}>
                             <label>Password:
                     <input type="password" name="password" value={this.state.password} readOnly={false} onChange={e => this.setState({ password: e.target.value })} />
                             </label>
@@ -79,7 +80,7 @@ class Registration extends Component {
                                 this.state.password == this.state.passwordCheck ?
                                     <input type="submit" value="Enter" /> :
                                     this.state.passwordCheck == "" ?
-                                        <div></div> : <div><p>The passwords don't match</p></div>
+                                        <div></div> : <div><p className="warning-red">The passwords don't match</p></div>
                             }
                         </form>
                     </div>

@@ -38,20 +38,20 @@ class Login extends Component {
     }
     render() {
         return (
-            <div onSubmit={this.login} className="loginPage">
-                <form >
+            <div  className="loginCard" onSubmit={this.login} >
+                <form className = "loginForm">
                     <label>
-                        Email:
+                        Email: 
                         <input type="text" name="email" value={this.state.email} onChange={this.handleChange} />
                     </label>
                     <label>
-                        Password:
-                        <input type="text" name="password" value={this.state.password} onChange={this.handleChange} />
+                        Password:   
+                        <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
                     </label>
                     <input type="submit" value="Login" />
+                    <button className="registerButton" onClick={this.toRegistration}>Register</button>
                 </form>
-                <br />
-                <button onClick={this.toRegistration}>Register</button>
+                
             </div>
         );
     }

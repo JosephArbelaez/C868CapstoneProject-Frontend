@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+
 const slideArray = [
         "https://c868finalproject.s3.us-east-2.amazonaws.com/slide1.jpg",
         "https://c868finalproject.s3.us-east-2.amazonaws.com/slide2.jpg",
@@ -76,13 +77,11 @@ class Home extends Component {
     render() {
         return (
             <div className="home">
-                <div className="eventSlideShow">
-                    <button onClick={this.back}>{'<'}</button>
+                <div className="eventSlideShowContainer">
+                    <button className="eventSlideShowLeftButton" onClick={this.back}>{'<'}</button>
                     <img className="slide" src={this.state.slideURL}></img>
-                    <button onClick={this.forward}>{'>'}</button>
-                    <button onClick={this.findState}>State</button>
+                    <button className="eventSlideShowRightButton" onClick={this.forward}>{'>'}</button>
                 </div>
-                
             </div>
         );
     }

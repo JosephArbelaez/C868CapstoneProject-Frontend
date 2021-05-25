@@ -1,25 +1,29 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
+import axios from 'axios';
+import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
+import { AiFillPrinter} from "react-icons/ai";
 
-const Row = ({ isbn, title, author, description, pageCount, price, genre, person, togglePopup, remove }) => (
-  <div className="tableRow">
-    <div>{isbn}</div>
-    <div>{title}</div>
-    <div>{author}</div>
-    <div>{description}</div>
-    <div>{pageCount}</div>
-    <div>{price}</div>
-    <div>{genre}</div>
-    {
-      person == null ? "-" :
-        <div>{person.name}</div>
-    }
-    <div className="edit">
-      <a onClick={() => togglePopup(isbn, title, author, description, pageCount, price, genre, person)}>?</a>
-    </div>
-    <div className="remove">
-      <a onClick={() => remove(isbn)}>X</a>
-    </div>
-  </div>
+const Row = ({ isbn, title, author, description, pageCount, price, genre, person, handleShowEditBook, removeBook }) => (
+  <tr>
+    <td>{isbn}</td>
+    <td>{title}</td>
+    <td>{author}</td>
+    <td>{pageCount}</td>
+    <td>${price}</td>
+    <td>{genre}</td>
+    <td>{person.name}</td>
+    <td className="edit">
+      <a onClick={() => handleShowEditBook(isbn, title, author, description, pageCount, price, genre)}><RiPencilFill /></a>
+    </td>
+    <td className="remove">
+      <a onClick={() => removeBook(isbn)}><RiDeleteBin5Fill /></a>
+    </td>
+  </tr>
 )
 
 class BookTableChecked extends Component {
@@ -27,8 +31,7 @@ class BookTableChecked extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: this.props.data,
-      popup: false,
+      data: [],
       isbn: 0,
       title: "",
       author: "",
@@ -36,72 +39,155 @@ class BookTableChecked extends Component {
       pageCount: 0,
       price: 0.0,
       genre: "",
-      person: ""
+      person: "",
+      showEditBook: false
     }
-    this.togglePopup = this.togglePopup.bind(this);
+    this.handleShowEditBook = this.handleShowEditBook.bind(this);
+    this.exportCheckedBookPDF = this.exportCheckedBookPDF.bind(this)
+    this.removeBook = this.removeBook.bind(this);
   }
 
-  remove = (isbn) => {
-    this.props.removeBook(isbn);
+  componentDidMount = () => {
+    axios.get(`http://localhost:8080/api/v1/book/checked`)
+      .then((res) => {
+        this.setState({
+          data: res.data,
+        });
+      })
   }
 
-  togglePopup = (isbn, title, author, description, pageCount, price, genre, person) => {
-    if (this.state.popup) {
-      this.setState({
-        isbn: 0,
-        title: "",
-        author: "",
-        description: "",
-        pageCount: 0,
-        price: 0.0,
-        genre: "",
-        person: "",
-        popup:false
-      })
-    } else {
-      this.setState({
-        isbn: isbn,
-        title: title,
-        author: author,
-        description: description,
-        pageCount: pageCount,
-        price: price,
-        genre: genre,
-        person: person,
-        popup: true
-      })
+  handleClose = () => {
+    this.setState({
+      showAddBook: false,
+      showEditBook: false
+    })
+  };
+  handleShowAddBook = () => {
+    this.setState({
+      showAddBook: true
+    })
+  };
+
+  handleShowEditBook = (isbn, title, author, description, pageCount, price, genre) => {
+    this.setState({
+      isbn: isbn,
+      title: title,
+      author: author,
+      description: description,
+      pageCount: pageCount,
+      price: price,
+      genre: genre,
+      showEditBook: true
+    })
+  };
+  editBook = () => {
+    var { isbn, title, author, description, pageCount, price, genre } = this.state;
+    var temp = this.state.data;
+    for (var i = 0; i < temp.length; i++) {
+      if (temp[i].isbn == isbn) {
+        temp[i].title = title;
+        temp[i].author = author;
+        temp[i].description = description;
+        temp[i].pageCount = pageCount;
+        temp[i].price = price;
+        temp[i].genre = genre;
+      }
     }
+    this.setState({
+      data: temp
+    })
+    var bodyformData = new FormData();
+    bodyformData.append('file', this.state.file);
+
+    axios.put(
+      `http://localhost:8080/api/v1/book/`, {
+      "isbn": isbn,
+      "title": title,
+      "author": author,
+      "description": description,
+      "pageCount": pageCount,
+      "price": price,
+      "genre": genre
+    }
+    ).then((response) => {
+      this.handleClose();
+    }, (error) => {
+      console.log(error);
+    });
   }
 
-  editBook = (isbn, title, author, description, pageCount, price, genre, person) => {
-    this.props.editBook(isbn, title, author, description, pageCount, price, genre, person);
+  removeBook = (isbn) => {
+    var temp = this.state.data;
+
+    for (var i = 0; i < temp.length; i++) {
+      if (temp[i].isbn == isbn) {
+        temp.splice(i, 1);
+      }
+    }
+
+    this.setState({
+      data: temp
+    })
+
+    axios.delete(`http://localhost:8080/api/v1/book/${isbn}`)
   }
+
+  exportCheckedBookPDF = () => {
+    let unit = "pt";
+    let size = "A4";
+    let orientation = "portrait";
+
+    let marginLeft = 40;
+    let doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(15);
+
+    let title = "My Awesome Report";
+    let headers = [["isbn", "title", "author", "description", "pageCount", "price", "genre", "patron"]];
+
+    let data = this.state.data.map(elt => [elt.isbn, elt.title, elt.author, elt.description, elt.pageCount, elt.price, elt.genre, elt.person.name]);
+
+    let content = {
+      startY: 50,
+      head: headers,
+      body: data
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("report.pdf")
+  }
+
+
+
   render() {
-    const rows = this.state.data.map((rowData) => <Row remove={this.remove} togglePopup={this.togglePopup} {...rowData} />);
+    const rows = this.state.data.map((rowData) => <Row remove={this.remove} handleShowEditBook={this.handleShowEditBook} togglePopup={this.togglePopup} removeBook={this.removeBook}{...rowData} />);
 
     return (
-      <div className="table">
-        <div className="tableHeader">
-          <div>ISBN</div>
-          <div>Title</div>
-          <div>Author</div>
-          <div>Description</div>
-          <div>Page Count</div>
-          <div>Price</div>
-          <div>Genre</div>
-          <div>Patron</div>
-          <div className="edit">Edit</div>
-          <div className="remove">Remove</div>
+      <div className="tableContainer">
+        <h2>Checked Books</h2>
+        <div className="tableIcons">
+          <AiFillPrinter size="2em" color="navy" onClick={() => this.exportCheckedBookPDF()} />
         </div>
-        <div>
+        <table>
+          <th>ISBN</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Page Count</th>
+          <th>Price</th>
+          <th>Genre</th>
+          <th>Patron</th>
+          <th>Edit</th>
+          <th>Remove</th>
           {rows}
-        </div>
-        {
-          (this.state.popup) ? (
-            <div classname="editPopup">
-              <div className="editpopup-inner">
-                <h4>My Super Duper Popup</h4>
-                <button className="close-button" onClick={() => this.togglePopup()}>close</button>
+        </table>
+        <Modal show={this.state.showEditBook} onHide={this.handleClose} editBook={this.editbook}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Book</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <form>
                 <label>
                   ISBN:
                     <input type="text" readOnly={true} name="ISBN" value={this.state.isbn} />
@@ -130,21 +216,20 @@ class BookTableChecked extends Component {
                   Genre:
                     <input type="text" readOnly={false} name="genre" value={this.state.genre} onChange={e => this.setState({ genre: e.target.value })} />
                 </label>
-                {
-                  this.state.person == null ? "" :
-                    <label>
-                      Patron:
-                    <input type="text" readOnly={true} name="patron" value={this.state.person.name} />
-                    </label>
-                }
-                <button onClick={() => this.editBook(this.state.isbn, this.state.title, this.state.author, this.state.description, this.state.pageCount, this.state.price, this.state.genre, this.state.person)}>Update</button>
-              </div>
+              </form>
             </div>
-          ) : ""
-        }
-      </div>
+            </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleClose}>
+              Close
+                </Button>
+            <Button variant="primary" onClick={this.editBook}>
+              Save Changes
+                </Button>
+          </Modal.Footer>
+        </Modal >
+      </div >
     );
-
   }
 }
 

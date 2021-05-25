@@ -38,28 +38,313 @@
   }
 }
 
+
+/* Navbar */
 .navbar {
-  position: fixed;
-  width: 200px;
+  width: 100%;
   height: 10%;
+  display: flex;
+  justify-content: space-around;
+  background-color: #210070;
 }
-.userAccountPage{
+.logo{
+  width: 100%;
+  max-width: 300px;
+}
+
+.loginButton{
+  height: 100px;
+  background-color: #210070;
+  border-style: none;
+  font-size: x-large;
+  color:white;
+}
+
+.loginButton:hover{
+  color:#d0f7ea;
+}
+
+.home{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eventSlideShowContainer{
+  position: relative;
+  margin: 2%;
+  max-width: fit-content;
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
   display: flex;
 }
+
+.eventSlideShowLeftButton{
+  position: absolute;
+  top: 50%;
+  left: 1%;
+  color:white;
+  background-color:black;
+  height: 35px;
+  width: 35px;
+  border-style: none;
+}
+
+.eventSlideShowRightButton{
+  position: absolute;
+  top: 50%;
+  right: 1%;
+  color:white;
+  background-color:black;
+  height: 35px;
+  width: 35px;
+  border-style: none;
+}
+
+.bar{
+  color: white;
+  background-color: #210070;
+  width: 100%;
+  padding: 1px;
+}
+
+.newBookCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+}
+.newBookContainer{
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  width: 45%;
+  margin: 4%;
+
+}
+.newBookTitle{
+  color: white;
+  background-color: #210070;
+  margin:0%;
+  padding:0%;
+}
+
+.newBookImage{
+  width: 150px;
+  height: 200px;
+  margin: 2%;
+}
+
+.galleryContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.galleryCard{
+  width: 60%;
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  margin: 2%;
+}
+.galleryTitle{
+  color: white;
+  background-color: #210070;
+  margin: 0;
+}
+.galleryPic{
+  width: 200px;
+  height: 200px;
+  margin: 2%;
+}
+
+/*** Login ***/
+.login{
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+.loginCard{
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 3%;
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  border-radius: 4px;
+}
+.loginForm{
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+input[type=text]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=text]:focus {
+  background-color: lightblue;
+}
+
+input[type=password]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=password]:focus {
+  background-color: lightblue;
+}
+input[type=submit] {
+  width: 100%;
+  background-color: #210070;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: #370b9c;
+}
+
+.registerButton{
+  width: 100%;
+  background-color: #210070;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.registerButton:hover {
+  background-color: #370b9c;
+}
+
+.registrationCard{
+  width: 100%;
+  margin-top: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registrationForm{
+  padding: 3%;
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  border-radius: 4px;
+}
+/*** USERS ***/
+.userAccountPage{
+  display: flex;
+  justify-content:space-evenly;
+}
+
+.user-fifth{
+  width: 20%;
+
+}
+.user-fourfifths{
+  width: 70%;
+}
 .userCard{
-  width: 300px;
-  height: 300px;
-  background-color: grey;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  width: 100%;
+  margin-top: 5%;
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #210070;
 }
 
 .userCardImage {
-  width:300px;
-  height: 100px;
+  width: 100%;
 }
 
-.userCardText{
-  margin: 0px;
+.userCardRow{
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.userCardIcon {
+  padding: 2%;
+}
+
+.userCardText {
+  color: white;
+  padding: 2%;
+}
+
+.userContainer{
+  box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 95%;
+  padding: 2%;
+}
+.adminTabs{
+  background-color:#210070;
+  margin-top: 2%;
+  width: 95%;
+}
+.adminTabButton{
+  width: 30%;
+  height: 100%;
+  background-color: #210070;
+  color: white;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.adminTabButton:hover{
+  color: grey;
+}
+
+.tableContainer{
+  overflow-x: auto;
+  width: 80%;
+}
+.tableIcons{
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+table{
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table td, table th {
+  border: 1px solid #ddd;
+  padding: 0px 8px;
+  height: 70px;
+}
+
+table tr:nth-child(even){background-color: #f2f2f2;}
+
+table tr:hover {background-color: #ddd;}
+
+table th {
+  text-align: left;
+  background-color: #210070;
+  color: white;
 }
 .bookCatalog {
   width: 30%;
@@ -77,7 +362,6 @@
 .bookCard:hover {
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
-
 
 .bookCardImg {
   width: 100px;
@@ -101,20 +385,16 @@
   border-style: dashed;
 }
 
-.table{
-  display: flex;
-  flex-direction: column;
-  margin: 1em;
-}
-
-.tableHeader{
-  display: flex;
-}
-
-.tableRow{
-  display: flex;
-}
 input:read-only {
   background-color: lightgray;
 }
 
+.warning-red{
+  color: red;
+}
+
+.dropzone {
+  width : 100%;
+  height : 20%;
+  border : 1px solid black;
+}

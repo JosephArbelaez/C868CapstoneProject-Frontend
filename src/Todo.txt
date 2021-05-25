@@ -1,12 +1,8 @@
 * Charge System
-    - How to determine whether a User gets a charge for a late book or not.
-        - Whenever the ADMIN logs in it'll apply charges to all books checked out longer that 2 weeks.
     - Dropdown for types of charges.
 
 * User 
     - Update themselves.
-    - List of reserved Books.
-    - Reserve books to check out.
 
 * Design
     - Revamp design

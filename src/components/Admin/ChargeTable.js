@@ -1,20 +1,31 @@
+import React, { Component } from 'react';
 import axios from 'axios';
-import React, { Component, useState } from 'react';
+import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
+import { AiFillPrinter, AiFillPlusCircle } from "react-icons/ai";
 
-const Row = ({ id, type, price, description, patron, remove, togglePopup}) => (
-  <div className="tableRow">
-    <div>{id}</div>
-    <div>{type}</div>
-    <div>{price}</div>
-    <div>{description}</div>
-    <div>{patron.name}</div>
-    <div className = "edit"> 
-      <a onClick = {() => togglePopup(id, type, price, description, patron)}>?</a>
-    </div>
-    <div className="remove">
-      <a onClick={() => remove(id)}>X</a>
-    </div>
-  </div>
+const Row = ({ id, type, price, description, person, removeCharge, handleShowEditCharge }) => (
+  <tr>
+    <td>{id}</td>
+    <td>{type}</td>
+    <td>${price}</td>
+    <td>{description}</td>
+    <td>{person.name}</td>
+    <td>
+      <a onClick={() => handleShowEditCharge(id, type, price, description)}><RiPencilFill /></a>
+    </td>
+    <td>
+      <a onClick={() => removeCharge(id)}><RiDeleteBin5Fill /></a>
+    </td>
+  </tr>
+)
+
+const Option = ({ userID, name }) => (
+  <option value={userID}>{name}</option>
 )
 
 class ChargeTable extends Component {
@@ -22,112 +33,269 @@ class ChargeTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chargeData: this.props.data,
-      popup: false,
-      id: 0, 
-      type : "", 
-      price: 0.0, 
+      data: [],
+      patronData: [],
+      patronId: '',
+      id: 0,
+      type: "",
+      price: 0.0,
       description: "",
-      patron: ""
+      person: "",
+      showAddCharge: false,
+      showEditCharge: false
     }
-    this.setType = this.setType.bind(this);
-    this.togglePopup = this.togglePopup.bind(this);
+    this.handleShowAddCharge = this.handleShowAddCharge.bind(this);
+    this.handleShowEditCharge = this.handleShowEditCharge.bind(this);
+    this.removeCharge = this.removeCharge.bind(this);
   }
 
-  setType(event) {
-    this.setState({
-      type: event.target.value
-    });
-  }
-
-  setPrice(event) {
-    this.setState({
-      price: event.target.value
-    });
-  }
-
-  setDescription(event) {
-    this.setState({
-      description: event.target.value
-    });
-  }
-  remove = (id) => {
-    this.props.removeCharge(id);
-  }
-
-  togglePopup = (id, type, price, description, patron) => {
-    if(this.state.popup) {
-      this.setState ({
-        id: 0, 
-        type: "", 
-        price: 0.0, 
-        description: "", 
-        patron: "",
-        popup: false
+  componentDidMount() {
+    axios.get(`http://localhost:8080/api/v1/charge`)
+      .then((res) => {
+        this.setState({
+          data: res.data
+        });
       })
-    } else {
-      this.setState ({
-        id: id, 
-        type: type, 
-        price: price, 
-        description: description, 
-        patron: patron,
-        popup: true
+      console.log(this.state.data);
+      axios.get(`http://localhost:8080/api/v1/person/patron`)
+      .then((res) => {
+        this.setState({
+          patronData: res.data,
+        });
+        console.log(this.state.patronData);
       })
+      
+  }
+
+  handleClose = () => {
+    this.setState({
+      showAddCharge: false,
+      showEditCharge: false
+    })
+  };
+  handleShowAddCharge = () => {
+    this.setState({
+      showAddCharge: true
+    })
+  };
+
+  handleShowEditCharge = (id, type, price, description) => {
+    this.setState({
+      id: id,
+      type: type,
+      price: price,
+      description: description,
+      showEditCharge: true
+    })
+  };
+
+  editCharge = () => {
+    var {id, type, price, description} = this.state;
+    var temp = this.state.data;
+    for (var i = 0; i < temp.length; i++) {
+      if (temp[i].id == id) {
+        temp[i].type = type;
+        temp[i].price = price;
+        temp[i].description = description;
+      }
     }
+    this.setState({
+      data: temp
+    })
+    var bodyformData = new FormData();
+    bodyformData.append('file', this.state.file);
+
+    axios.put(
+      `http://localhost:8080/api/v1/charge/`, {
+      "id": id,
+      "type": type,
+      "price": price,
+      "description": description
+    }
+    ).then((response) => {
+      this.handleClose();
+    });
+  };
+
+  exportChargePDF = () => {
+    let unit = "pt";
+    let size = "A4";
+    let orientation = "portrait";
+
+    let marginLeft = 40;
+    let doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(15);
+
+    let title = "My Awesome Report";
+    let headers = [["id", "type", "price", "description", "patron"]];
+
+    let data = this.state.data.map(elt => [elt.id, elt.type, elt.price, elt.description, elt.person.name]);
+
+    console.log(data);
+    let content = {
+      startY: 50,
+      head: headers,
+      body: data
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("report.pdf")
   }
 
-  editCharge = (id, type, price, description) => {
-    this.props.editCharge(id, type, price, description);
+  removeCharge = (id) => {
+    var temp = this.state.data;
+
+    for (var i = 0; i < temp.length; i++) {
+      if (temp[i].id == id) {
+        temp.splice(i, 1);
+      }
+    }
+
+    this.setState({
+      data: temp
+    })
+
+    axios.delete(`http://localhost:8080/api/v1/charge/${id}`)
+  }
+  addCharge = (event) => {
+    event.preventDefault()
+    var { type, price, description, patronId} = this.state;
+    var date = new Date();
+    var dd = String(date.getDate()).padStart(2, '0');
+    var mm = String(date.getMonth() + 1).padStart(2, '0');
+    var yyyy = date.getFullYear();
+
+    date = yyyy + '-' + mm + '-' + dd;
+    var bodyformData = new FormData();
+    bodyformData.append('file', this.state.file);
+      axios.post(
+        `http://localhost:8080/api/v1/charge/${patronId}`, {
+        "id": 0,
+        "type": type,
+        "price": price,
+        "date": date,
+        "description": description
+      }
+      ).then((response) => {
+        var temp = this.state.data;
+        var json = { id: "In Progress", type: type, price: price, description: description, person: "In Progress"};
+        temp.push(json);
+  
+        this.setState(
+          {
+            showAddCharge: false,
+            data: temp
+          })
+          this.handleClose();
+      }, (error) => {
+        console.log(error);
+      });
   }
   render() {
-    const rows = this.state.chargeData.map((rowData) => <Row remove={this.remove} togglePopup={this.togglePopup} {...rowData} />);
-
+    const rows = this.state.data.map((rowData) => <Row removeCharge={this.removeCharge} handleShowEditCharge={this.handleShowEditCharge} {...rowData} />);
+    const patrons = this.state.patronData.map((rowData) => <Option {...rowData} />);
     return (
-      <div className="table">
-        <div className="tableHeader">
-          <div>ID</div>
-          <div>Type</div>
-          <div>Price</div>
-          <div>Description</div>
-          <div>Patron</div>
-          <div className="edit">Edit</div>
-          <div className="remove">Remove</div>
+      <div className="tableContainer">
+        <h2>Charge</h2>
+        <div className="tableIcons">
+          <AiFillPrinter size="2em" color="navy" onClick={() => this.exportChargePDF()} />
+          <AiFillPlusCircle size="2em" color="navy" onClick={this.handleShowAddCharge}/>
         </div>
-        <div>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Patron</th>
+            <th>Edit</th>
+            <th>Remove</th>
+          </tr>
           {rows}
-        </div>
-{
-      (this.state.popup) ? (
-        <div classname="editPopup">
-            <div className="editpopup-inner">
-            <h4>My Super Duper Popup</h4>
-                <button className = "close-button" onClick={() => this.togglePopup()}>close</button>
+        </table>
+        <Modal show={this.state.showEditCharge} onHide={this.handleClose} editCharge={this.editCharge}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Charge</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <form>
                 <label>
-                    ID:
-                    <input type="text" readOnly = {true} name="id" value={this.state.id} />
+                  ID:
+                    <input type="text" readOnly={true} name="id" value={this.state.id} />
                 </label>
                 <label>
-                    Type:
-                    <input type="text" readOnly = {false} name="type" value={this.state.type} onChange={e => this.setState({type: e.target.value})} />
+                  Type:
+                    <input type="text" readOnly={false} name="type" value={this.state.type} onChange={e => this.setState({ type: e.target.value })} />
                 </label>
                 <label>
-                    Price:
-                    <input type="text" readOnly = {false} name="price" value={this.state.price} onChange={e => this.setState({price: e.target.value})} />
+                  Price:
+                    <input type="text" readOnly={false} name="author" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
                 </label>
                 <label>
-                    Description:
-                    <input type="text" readOnly = {false} name="description" value={this.state.description} onChange={e => this.setState({description: e.target.value})} />
+                  Description:
+                    <input type="text" readOnly={false} name="description" value={this.state.description} onChange={e => this.setState({ description: e.target.value })} />
                 </label>
-                <label>
-                    Patron:
-                    <input type="text" readOnly = {true} name="patron" value={this.state.patron.name} />
-                </label>
-                <button onClick={()=> this.editCharge(this.state.id, this.state.type, this.state.price, this.state.description)}>Update</button>
+              </form>
             </div>
-        </div>
-    ) : ""
-      }
+            </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleClose}>
+              Close
+                </Button>
+            <Button variant="primary" onClick={this.editCharge}>
+              Save Changes
+                </Button>
+          </Modal.Footer>
+        </Modal >
+        <Modal show={this.state.showAddCharge} onHide={this.handleClose} addCharge={this.addCharge}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add Charge</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <form>
+                <label>
+                  Title:
+                    <input type="text" readOnly={false} name="title" value={this.state.title} onChange={e => this.setState({ title: e.target.value })} />
+                </label>
+                <label>
+                  Type:
+                    <select name = "type" readOnly={false} name="type" value={this.state.type} onChange={e => this.setState({ type: e.target.value })}>
+                      <option>Select Type</option>
+                      <option value="DamagedBook">Damaged Book</option>
+                      <option value="LostBook">Lost Book</option>
+                    </ select>
+                </label>
+                <label>
+                  Patron:
+                    <select name = "type" readOnly={false} name="type" value={this.state.patronId} onChange={e => this.setState({ patronId: e.target.value })}>
+                    <option>Select Patron</option>
+                      {patrons}
+                    </ select>
+                </label>
+                <label>
+                  Price:
+                    <input type="text" readOnly={false} name="author" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
+                </label>
+                <label>
+                  Description:
+                    <input type="text" readOnly={false} name="description" value={this.state.description} onChange={e => this.setState({ description: e.target.value })} />
+                </label>
+              </form>
+            </div>
+            </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleClose}>
+              Close
+                </Button>
+            <Button variant="primary" onClick={this.addCharge}>
+              Add Charge
+                </Button>
+          </Modal.Footer>
+        </Modal >
       </div>
     );
 
