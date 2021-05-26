@@ -4,7 +4,7 @@ const ChargeCard = ({chargeTotal}) => {
 
     return (
         <div class ="userCard">
-            <p className = "userCardText"><b>Amount: </b>${chargeTotal}</p>
+            <p className = "userCardText"><b>Amount Due: </b>${chargeTotal}</p>
         </div>
     );
 }

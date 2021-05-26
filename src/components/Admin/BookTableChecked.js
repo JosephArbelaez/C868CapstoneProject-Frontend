@@ -17,10 +17,10 @@ const Row = ({ isbn, title, author, description, pageCount, price, genre, person
     <td>${price}</td>
     <td>{genre}</td>
     <td>{person.name}</td>
-    <td className="edit">
+    <td>
       <a onClick={() => handleShowEditBook(isbn, title, author, description, pageCount, price, genre)}><RiPencilFill /></a>
     </td>
-    <td className="remove">
+    <td>
       <a onClick={() => removeBook(isbn)}><RiDeleteBin5Fill /></a>
     </td>
   </tr>

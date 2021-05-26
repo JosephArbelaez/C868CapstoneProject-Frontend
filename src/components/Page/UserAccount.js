@@ -5,6 +5,7 @@ import BookCatalog from '../Catalog/BookCatalog';
 import BookCollection from '../User/BookCollection';
 import ChargeCard from '../User/ChargeCard';
 import UserCard from '../User/UserCard';
+import { BsSearch } from "react-icons/bs";
 
 
 
@@ -21,7 +22,7 @@ class UserAccount extends Component {
             charges: [],
             chargeSum: 0,
             value: '',
-            tab: "home"
+            tab: "books"
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -71,7 +72,27 @@ class UserAccount extends Component {
                     chargeSum: sum.toFixed(2)
                 })
             }
-            )
+        )
+        axios.get(`http://localhost:8080/api/v1/book`)
+            .then((res) => {
+                var temp = [];
+
+                for (var i = 0; i < res.data.length; i++) {
+                    res.data[i].title = (res.data[i].title.charAt(0).toUpperCase() + res.data[i].title.slice(1));
+                    if (res.data[i].person) {
+                        if (res.data[i].person.userID == this.props.userID) {
+                            temp.push(res.data[i]);
+                        }
+                    }
+                }
+
+                this.setState({
+                    books: res.data,
+                    bookResults: res.data,
+                    bookCollection: temp
+                });
+            })
+
     }
 
     searchBooks = (event) => {
@@ -130,19 +151,18 @@ class UserAccount extends Component {
     }
     renderSwitch = () => {
         switch (this.state.tab) {
-            case "home":
+            case "books":
                 return (
-                    <div>
-
+                    <div className="userContainer">
                         <BookCollection books={this.state.bookCollection} />
                     </div>
                 )
             case "reserve":
                 return (
-                    <div>
-                        <form onSubmit={this.searchBooks}>
-                            <input type="text" value={this.state.value} onChange={this.handleChange} />
-                            <input type="submit" value="Submit" />
+                    <div className="userContainer">
+                        <form className="search"onSubmit={this.searchBooks}>
+                            <input className="searchText"type="text" value={this.state.value} onChange={this.handleChange} />
+                            <button type="submit" value="Submit" className="searchButton"><BsSearch size="1.5em" color="white"/> Search</button>
                         </form>
                         <BookCatalog books={this.state.bookResults} reserveBook={this.reserveBook} />
                     </div>
@@ -162,7 +182,7 @@ class UserAccount extends Component {
                 </div>
                 <div className="user-fourfifths">
                     <div className="adminTabs">
-                        <button className="adminTabButton" onClick={() => this.changeTab("home")}>Home</button>
+                        <button className="adminTabButton" onClick={() => this.changeTab("books")}>Home</button>
                         <button className="adminTabButton" onClick={() => this.changeTab("reserve")}>Reserve</button>
                     </div>
                     {this.renderSwitch()}

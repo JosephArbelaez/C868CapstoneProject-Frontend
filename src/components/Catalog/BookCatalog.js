@@ -9,8 +9,8 @@ const BookCatalog = ({ books, reserveBook }) => {
         )
     }
     return (
-        <div class ="bookCatalog">
-            <h2>Book Catalog</h2>
+        <div className ="bookCatalog">
+            <h2 className="bookCatalogTitle">Book Catalog</h2>
             {
                 books.map((book, i) => {
                     console.log(book);

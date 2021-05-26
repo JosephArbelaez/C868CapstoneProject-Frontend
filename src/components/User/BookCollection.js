@@ -1,15 +1,16 @@
 import React, { Component} from 'react';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable'
+import { AiFillPrinter} from "react-icons/ai";
 
 const Row = ({ isbn, title, author, price, checkoutDate}) => (
-  <div className="tableRow">
-    <div>{isbn}</div>
-    <div>{title}</div>
-    <div>{author}</div>
-    <div>{price}</div>
-    <div>{checkoutDate}</div>
-  </div>
+  <tr>
+    <td>{isbn}</td>
+    <td>{title}</td>
+    <td>{author}</td>
+    <td>{price}</td>
+    <td>{checkoutDate}</td>
+  </tr>
 )
 
 class BookTableChecked extends Component {
@@ -57,21 +58,21 @@ class BookTableChecked extends Component {
     const rows = this.props.books.map((rowData) => <Row {...rowData} />);
 
     return (
-      <div className="table">
-        <button onClick={this.exportBookCollectionPDF}>Generate Checked Report</button>
-        <div className="tableHeader">
-          <div>ISBN</div>
-          <div>Title</div>
-          <div>Author</div>
-          <div>Price</div>
-          <div>Checkout Date</div>
+      <div className = "tableContainer">
+        <h2>Your Books</h2>
+        <div className="tableIcons">
+          <AiFillPrinter size="2em" color="navy" onClick={() => this.exportBookCollectionPDF()} />
         </div>
-        <div>
+        <table>
+          <th>ISBN</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Price</th>
+          <th>Checkout Date</th>
           {rows}
-        </div>
+      </table>
       </div>
     );
-
   }
 }
 
