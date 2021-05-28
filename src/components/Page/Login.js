@@ -25,7 +25,7 @@ class Login extends Component {
         var { email, password} = this.state;
         email = email.toLowerCase();
         axios.get(
-            `http://localhost:8080/api/v1/person/login?email=${email}&password=${password}`
+            `https://c868capstoneproject.herokuapp.com/api/v1/person/login?email=${email}&password=${password}`
         ).then(res => {
             if(res.data.userID){
                 this.props.login(res.data.userID, res.data.name, res.data.cardNumber, res.data.url);

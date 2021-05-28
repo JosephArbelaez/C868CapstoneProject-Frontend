@@ -23,7 +23,7 @@ class Registration extends Component {
         if (this.state.cardnumber) {
             console.log(typeof this.state.cardnumber);
             axios.get(
-                `http://localhost:8080/api/v1/person/cardNumber/${this.state.cardnumber}`
+                `https://c868capstoneproject.herokuapp.com/api/v1/person/cardNumber/${this.state.cardnumber}`
             ).then((response) => {
                 this.setState({
                     message: 'successful',
@@ -39,7 +39,7 @@ class Registration extends Component {
         event.preventDefault();
         if (this.state.password) {
             axios.put(
-                `http://localhost:8080/api/v1/person/patron/`, {
+                `https://c868capstoneproject.herokuapp.com/api/v1/person/patron/`, {
                 "userID": this.state.userID,
                 "name": this.state.name,
                 "email": this.state.email,

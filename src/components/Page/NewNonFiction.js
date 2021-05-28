@@ -11,7 +11,7 @@ class NewNonFiction extends Component {
     };
 
     componentDidMount = () => {
-        axios.get(`http://localhost:8080/api/v1/book/genre/NonFiction`)
+        axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/book/genre/NonFiction`)
             .then((res) => {
                 var x = 0, y = 0, z = 0;
                 var randomBooks = [];
