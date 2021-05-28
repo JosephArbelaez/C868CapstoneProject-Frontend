@@ -9,6 +9,7 @@ import NewNonFiction from './NewNonFiction';
 import NewFiction from './NewFiction';
 import Gallery from './Gallery';
 import Bar from './Bar';
+import Footer from '../Footer/Footer';
 
 const initialState = {
     userID: '',
@@ -50,28 +51,31 @@ class Page extends Component {
     toLogin = () => {
         this.props.pageChange('login');
     }
+
     toPhoto = () => {
         this.props.pageChange('photo');
     }
+
     changeName = (name) => {
         this.setState({
             name: name
         })
     }
-    renderSwitch(name, userID, cardNumber, url) {
+
+    renderSwitch() {
+        var { userID, name, cardNumber, url } = this.state;
         switch (this.props.page) {
             case 'login':
                 return (
-
-                        <div className="login">
-                            <Login
-                                name={name}
-                                userID={userID}
-                                cardNumber={cardNumber}
-                                url={url}
-                                login={this.login}
-                                toRegistration={this.toRegistration} />
-                        </div>
+                    <div className="login">
+                        <Login
+                            name={name}
+                            userID={userID}
+                            cardNumber={cardNumber}
+                            url={url}
+                            login={this.login}
+                            toRegistration={this.toRegistration} />
+                    </div>
                 )
             case 'userAccount':
                 return (
@@ -90,7 +94,7 @@ class Page extends Component {
                         changeName={this.changeName}
                         name={name}
                         userID={userID}
-                        url={url}/>
+                        url={url} />
                 )
 
             case 'registration':
@@ -105,15 +109,16 @@ class Page extends Component {
                 return (
                     <div>
                         <Home />
-                        <Bar text = {this.state.bar1}/>
+                        <Bar text={this.state.bar1} />
                         <div className="newBookCard">
                             <NewNonFiction />
                             <NewFiction />
                         </div>
-                        <Bar text = {this.state.bar2}/>
+                        <Bar text={this.state.bar2} />
                         <div className="galleryContainer">
                             <Gallery />
                         </div>
+                        <Footer />
                     </div>
                 )
 
@@ -121,16 +126,25 @@ class Page extends Component {
                 return (
                     <div>
                         <Home />
+                        <Bar text={this.state.bar1} />
+                        <div className="newBookCard">
+                            <NewNonFiction />
+                            <NewFiction />
+                        </div>
+                        <Bar text={this.state.bar2} />
+                        <div className="galleryContainer">
+                            <Gallery />
+                        </div>
+                        <Footer />
                     </div>
                 )
         }
     }
     render() {
-        const { userID, name, cardNumber, url } = this.state;
         return (
             <div className="content">
-                <Navbar pageChange={this.props.pageChange} loginText={this.state.loginText}/>
-                {this.renderSwitch(name, userID, cardNumber, url)}
+                <Navbar pageChange={this.props.pageChange} loginText={this.state.loginText} />
+                {this.renderSwitch()}
             </div>
         )
     }

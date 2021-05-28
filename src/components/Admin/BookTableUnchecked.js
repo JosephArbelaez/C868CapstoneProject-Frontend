@@ -45,7 +45,9 @@ class BookTableUnchecked extends Component {
       genre: "",
       person: "",
       showAddBook: false,
-      showEditBook: false
+      showEditBook: false,
+      message: false,
+      file: ''
     }
     this.handleShowAddBook = this.handleShowAddBook.bind(this);
     this.handleShowEditBook = this.handleShowEditBook.bind(this);
@@ -64,7 +66,8 @@ class BookTableUnchecked extends Component {
   handleClose = () => {
     this.setState({
       showAddBook: false,
-      showEditBook: false
+      showEditBook: false,
+      message: false
     })
   };
   handleShowAddBook = () => {
@@ -87,138 +90,149 @@ class BookTableUnchecked extends Component {
   };
 
   editBook = () => {
-    var { isbn, title, author, description, pageCount, price, genre } = this.state;
-    var temp = this.state.data;
-    for (var i = 0; i < temp.length; i++) {
-      if (temp[i].isbn == isbn) {
-        temp[i].title = title;
-        temp[i].author = author;
-        temp[i].description = description;
-        temp[i].pageCount = pageCount;
-        temp[i].price = price;
-        temp[i].genre = genre;
+    var { isbn, title, author, description, pageCount, price, genre, file } = this.state;
+    if (title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != '' && file != '') {
+      var temp = this.state.data;
+      for (var i = 0; i < temp.length; i++) {
+        if (temp[i].isbn == isbn) {
+          temp[i].title = title;
+          temp[i].author = author;
+          temp[i].description = description;
+          temp[i].pageCount = pageCount;
+          temp[i].price = price;
+          temp[i].genre = genre;
+        }
       }
-    }
-    this.setState({
-      data: temp
-    })
-    var bodyformData = new FormData();
-    bodyformData.append('file', this.state.file);
+      this.setState({
+        data: temp
+      })
+      var bodyformData = new FormData();
+      bodyformData.append('file', this.state.file);
 
-    axios.put(
-      `http://localhost:8080/api/v1/book/`, {
-      "isbn": isbn,
-      "title": title,
-      "author": author,
-      "description": description,
-      "pageCount": pageCount,
-      "price": price,
-      "genre": genre
+      axios.put(
+        `http://localhost:8080/api/v1/book/`, {
+        "isbn": isbn,
+        "title": title,
+        "author": author,
+        "description": description,
+        "pageCount": pageCount,
+        "price": price,
+        "genre": genre
+      }
+      ).then((response) => {
+        this.handleClose();
+      }, (error) => {
+        console.log(error);
+      });
+    } else {
+      this.setState({
+        message: true
+      })
     }
-    ).then((response) => {
-      this.handleClose();
-    }, (error) => {
-      console.log(error);
-    });
   }
 
   removeBook = (isbn) => {
     var temp = this.state.data;
 
     for (var i = 0; i < temp.length; i++) {
-        if (temp[i].isbn == isbn) {
-            temp.splice(i, 1);
-        }
+      if (temp[i].isbn == isbn) {
+        temp.splice(i, 1);
+      }
     }
 
     this.setState({
-        data: temp
+      data: temp
     })
 
     axios.delete(`http://localhost:8080/api/v1/book/${isbn}`)
-}
+  }
 
-exportUncheckedBookPDF = () => {
-  let unit = "pt";
-  let size = "A4";
-  let orientation = "portrait";
+  exportUncheckedBookPDF = () => {
+    let unit = "pt";
+    let size = "A4";
+    let orientation = "portrait";
 
-  let marginLeft = 40;
-  let doc = new jsPDF(orientation, unit, size);
+    let marginLeft = 40;
+    let doc = new jsPDF(orientation, unit, size);
 
-  doc.setFontSize(15);
+    doc.setFontSize(15);
 
-  let title = "My Awesome Report";
-  let headers = [["isbn", "title", "author", "description", "pageCount", "price", "genre"]];
+    let title = "My Awesome Report";
+    let headers = [["isbn", "title", "author", "description", "pageCount", "price", "genre"]];
 
-  let data = this.state.data.map(elt => [elt.isbn, elt.title, elt.author, elt.description, elt.pageCount, elt.price, elt.genre]);
+    let data = this.state.data.map(elt => [elt.isbn, elt.title, elt.author, elt.description, elt.pageCount, elt.price, elt.genre]);
 
-  let content = {
+    let content = {
       startY: 50,
       head: headers,
       body: data
-  };
+    };
 
-  doc.text(title, marginLeft, 40);
-  doc.autoTable(content);
-  doc.save("report.pdf")
-}
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("report.pdf")
+  }
 
-handleOnDrop = (files) => {
-  files.map(f => {
-    this.setState({
-      file: f
+  handleOnDrop = (files) => {
+    files.map(f => {
+      this.setState({
+        file: f
+      })
     })
-  })
-  console.log(this.state.file);
-}
+    console.log(this.state.file);
+  }
 
-addBook = (event) => {
-  event.preventDefault()
-  var bodyformData = new FormData();
-  bodyformData.append('file', this.state.file);
+  addBook = (event) => {
+    event.preventDefault()
+    var bodyformData = new FormData();
+    bodyformData.append('file', this.state.file);
 
-  var { isbn, title, author, description, pageCount, price, genre } = this.state;
-
-  axios({
-    method: "post",
-    url: "http://localhost:8080/storage/uploadFile",
-    data: bodyformData,
-    headers: { "Content-Type": "multipart/form-data" },
-  }).then((res) => {
-    this.setState({
-      url: res.data
-    })
-    const { url } = this.state;
-    axios.post(
-      `http://localhost:8080/api/v1/book`, {
-      "isbn": isbn,
-      "title": title,
-      "author": author,
-      "description": description,
-      "pageCount": pageCount,
-      "price": price,
-      "genre": genre,
-      "url": url
-    }
-    ).then((response) => {
-      var temp = this.state.data;
-      var json = { title: title, author: author, description: description, pageCount: pageCount, price: price, genre: genre, url: url, isbn: "In Progress" };
-      temp.push(json);
-
-      this.setState(
-        {
-          showAddBook: false,
-          data: temp
+    var { isbn, title, author, description, pageCount, price, genre } = this.state;
+    if (isbn != 0 && isbn != '' && title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != '') {
+      axios({
+        method: "post",
+        url: "http://localhost:8080/storage/uploadFile",
+        data: bodyformData,
+        headers: { "Content-Type": "multipart/form-data" },
+      }).then((res) => {
+        this.setState({
+          url: res.data
         })
-        this.handleClose();
-    }, (error) => {
-      console.log(error);
-    });
-  });
-}
+        const { url } = this.state;
+        axios.post(
+          `http://localhost:8080/api/v1/book`, {
+          "isbn": isbn,
+          "title": title,
+          "author": author,
+          "description": description,
+          "pageCount": pageCount,
+          "price": price,
+          "genre": genre,
+          "url": url
+        }
+        ).then((response) => {
+          var temp = this.state.data;
+          var json = { title: title, author: author, description: description, pageCount: pageCount, price: price, genre: genre, url: url, isbn: "In Progress" };
+          temp.push(json);
+
+          this.setState(
+            {
+              showAddBook: false,
+              data: temp
+            })
+          this.handleClose();
+        }, (error) => {
+          console.log(error);
+        });
+      });
+    } else {
+      this.setState({
+        message: true
+      })
+    }
+  }
   render() {
-    const rows = this.state.data.map((rowData) => <Row remove={this.remove} removeBook ={this.removeBook} handleShowEditBook={this.handleShowEditBook} {...rowData} />);
+    const rows = this.state.data.map((rowData) => <Row remove={this.remove} removeBook={this.removeBook} handleShowEditBook={this.handleShowEditBook} {...rowData} />);
     const baseStyle = {
       width: 300,
       height: 100,
@@ -294,7 +308,10 @@ addBook = (event) => {
                 </label>
               </form>
             </div>
-            </Modal.Body>
+            {
+              this.state.message == '' ? <div></div> : <p className="message">Invalid Data</p>
+            }
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.handleClose}>
               Close
@@ -313,7 +330,7 @@ addBook = (event) => {
               <form>
                 <label>
                   ISBN:
-                    <input type="text" readOnly={false} name="ISBN" value={this.state.isbn} onChange={e => this.setState({ isbn: e.target.value })}/>
+                    <input type="text" readOnly={false} name="ISBN" value={this.state.isbn} onChange={e => this.setState({ isbn: e.target.value })} />
                 </label>
                 <label>
                   Title:
@@ -361,7 +378,10 @@ addBook = (event) => {
                 </Dropzone>
               </form>
             </div>
-            </Modal.Body>
+            {
+              this.state.message == '' ? <div></div> : <p className="message">Invalid Data</p>
+            }
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.handleClose}>
               Close

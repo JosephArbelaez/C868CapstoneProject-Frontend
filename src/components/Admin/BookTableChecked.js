@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import { RiPencilFill} from "react-icons/ri";
+import { GrReturn } from "react-icons/gr";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
-import { AiFillPrinter} from "react-icons/ai";
+import { AiFillPrinter } from "react-icons/ai";
 
-const Row = ({ isbn, title, author, description, pageCount, price, genre, person, handleShowEditBook, removeBook }) => (
+const Row = ({ isbn, title, author, description, pageCount, price, genre, person, handleShowEditBook, checkInBook }) => (
   <tr>
     <td>{isbn}</td>
     <td>{title}</td>
@@ -21,7 +22,7 @@ const Row = ({ isbn, title, author, description, pageCount, price, genre, person
       <a onClick={() => handleShowEditBook(isbn, title, author, description, pageCount, price, genre)}><RiPencilFill /></a>
     </td>
     <td>
-      <a onClick={() => removeBook(isbn)}><RiDeleteBin5Fill /></a>
+      <a onClick={() => checkInBook(isbn)}><GrReturn /></a>
     </td>
   </tr>
 )
@@ -40,11 +41,12 @@ class BookTableChecked extends Component {
       price: 0.0,
       genre: "",
       person: "",
-      showEditBook: false
+      showEditBook: false,
+      message: false
     }
     this.handleShowEditBook = this.handleShowEditBook.bind(this);
     this.exportCheckedBookPDF = this.exportCheckedBookPDF.bind(this)
-    this.removeBook = this.removeBook.bind(this);
+    this.checkInBook = this.checkInBook.bind(this);
   }
 
   componentDidMount = () => {
@@ -59,7 +61,8 @@ class BookTableChecked extends Component {
   handleClose = () => {
     this.setState({
       showAddBook: false,
-      showEditBook: false
+      showEditBook: false,
+      message: false
     })
   };
   handleShowAddBook = () => {
@@ -82,54 +85,74 @@ class BookTableChecked extends Component {
   };
   editBook = () => {
     var { isbn, title, author, description, pageCount, price, genre } = this.state;
-    var temp = this.state.data;
-    for (var i = 0; i < temp.length; i++) {
-      if (temp[i].isbn == isbn) {
-        temp[i].title = title;
-        temp[i].author = author;
-        temp[i].description = description;
-        temp[i].pageCount = pageCount;
-        temp[i].price = price;
-        temp[i].genre = genre;
+    if (title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != ''){
+      var temp = this.state.data;
+      for (var i = 0; i < temp.length; i++) {
+        if (temp[i].isbn == isbn) {
+          temp[i].title = title;
+          temp[i].author = author;
+          temp[i].description = description;
+          temp[i].pageCount = pageCount;
+          temp[i].price = price;
+          temp[i].genre = genre;
+        }
       }
-    }
-    this.setState({
-      data: temp
-    })
-    var bodyformData = new FormData();
-    bodyformData.append('file', this.state.file);
+      this.setState({
+        data: temp
+      })
+      var bodyformData = new FormData();
+      bodyformData.append('file', this.state.file);
 
-    axios.put(
-      `http://localhost:8080/api/v1/book/`, {
-      "isbn": isbn,
-      "title": title,
-      "author": author,
-      "description": description,
-      "pageCount": pageCount,
-      "price": price,
-      "genre": genre
+      axios.put(
+        `http://localhost:8080/api/v1/book/`, {
+        "isbn": isbn,
+        "title": title,
+        "author": author,
+        "description": description,
+        "pageCount": pageCount,
+        "price": price,
+        "genre": genre
+      }
+      ).then((response) => {
+        this.handleClose();
+      }, (error) => {
+        console.log(error);
+      });
+    } else {
+      this.setState({
+        message: true
+      })
     }
-    ).then((response) => {
-      this.handleClose();
-    }, (error) => {
-      console.log(error);
-    });
   }
 
-  removeBook = (isbn) => {
-    var temp = this.state.data;
-
-    for (var i = 0; i < temp.length; i++) {
-      if (temp[i].isbn == isbn) {
-        temp.splice(i, 1);
+  checkInBook = (isbn) => {
+    this.state.data.forEach((element) => {
+      if (element.isbn == isbn) {
+        var temp = this.state.data;
+        for (var i = 0; i < temp.length; i++) {
+          if (temp[i].isbn == isbn) {
+            temp.splice(i, 1);
+          }
+        }
+    
+        this.setState({
+          data: temp
+        })
+          element.status = ''
+          axios.put(`http://localhost:8080/api/v1/book/checkin`, {
+              "isbn": element.isbn,
+              "title": element.title,
+              "author": element.author,
+              "description": element.description,
+              "pageCount": element.pageCount,
+              "price": element.price,
+              "status": '',
+              "genre": element.genre,
+              "url": element.url
+          }
+          )
       }
-    }
-
-    this.setState({
-      data: temp
-    })
-
-    axios.delete(`http://localhost:8080/api/v1/book/${isbn}`)
+  })
   }
 
   exportCheckedBookPDF = () => {
@@ -161,7 +184,7 @@ class BookTableChecked extends Component {
 
 
   render() {
-    const rows = this.state.data.map((rowData) => <Row remove={this.remove} handleShowEditBook={this.handleShowEditBook} togglePopup={this.togglePopup} removeBook={this.removeBook}{...rowData} />);
+    const rows = this.state.data.map((rowData) => <Row checkInBook={this.checkInBook} handleShowEditBook={this.handleShowEditBook} {...rowData} />);
 
     return (
       <div className="tableContainer">
@@ -178,7 +201,7 @@ class BookTableChecked extends Component {
           <th>Genre</th>
           <th>Patron</th>
           <th>Edit</th>
-          <th>Remove</th>
+          <th>Return</th>
           {rows}
         </table>
         <Modal show={this.state.showEditBook} onHide={this.handleClose} editBook={this.editbook}>
@@ -218,7 +241,10 @@ class BookTableChecked extends Component {
                 </label>
               </form>
             </div>
-            </Modal.Body>
+            {
+              this.state.message == '' ? <div></div> : <p className="message">Invalid Data</p>
+            }
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.handleClose}>
               Close

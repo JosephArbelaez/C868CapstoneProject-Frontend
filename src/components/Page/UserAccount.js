@@ -1,4 +1,4 @@
-import { findAllByDisplayValue } from '@testing-library/dom';
+
 import axios from 'axios';
 import React, { Component } from 'react';
 import BookCatalog from '../Catalog/BookCatalog';
@@ -72,7 +72,7 @@ class UserAccount extends Component {
                     chargeSum: sum.toFixed(2)
                 })
             }
-        )
+            )
         axios.get(`http://localhost:8080/api/v1/book`)
             .then((res) => {
                 var temp = [];
@@ -120,15 +120,17 @@ class UserAccount extends Component {
         })
     }
 
-    reserveBook = (data) => {
-        console.log("User Account - Reserve Book");
-        console.log(data.isbn);
-        console.log(this.props.userID)
+    reserveBook = (isbn) => {
         this.state.books.forEach((element) => {
-            if (element.isbn == data.isbn) {
+            if (element.isbn == isbn) {
                 element.status = "reserved"
-
-                axios.put(`http://localhost:8080/api/v1/book/${this.props.userID}`, {
+                var date = new Date();
+                var dd = String(date.getDate()).padStart(2, '0').toString();
+                var mm = String(date.getMonth() + 1).padStart(2, '0').toString();
+                var yyyy = date.getFullYear().toString();
+          
+                date = yyyy + '-' + mm + '-' + dd;
+                axios.put(`http://localhost:8080/api/v1/book/reserve/${this.props.userID}`, {
                     "isbn": element.isbn,
                     "title": element.title,
                     "author": element.author,
@@ -137,17 +139,21 @@ class UserAccount extends Component {
                     "price": element.price,
                     "status": element.status,
                     "genre": element.genre,
-                    "url": element.url
+                    "url": element.url,
+                    "person_id":this.props.userID
                 }
                 ).then((response) => {
                     console.log(response);
+                    var temp = this.state.bookCollection;
+                    temp.push({isbn:element.isbn, title: element.title, author: element.author, price: element.price, checkoutDate: date})
+                    this.setState({
+                        bookCollection: temp
+                    })
                 }, (error) => {
                     console.log(error);
                 });
             }
         })
-
-
     }
     renderSwitch = () => {
         switch (this.state.tab) {
@@ -160,9 +166,9 @@ class UserAccount extends Component {
             case "reserve":
                 return (
                     <div className="userContainer">
-                        <form className="search"onSubmit={this.searchBooks}>
-                            <input className="searchText"type="text" value={this.state.value} onChange={this.handleChange} />
-                            <button type="submit" value="Submit" className="searchButton"><BsSearch size="1.5em" color="white"/> Search</button>
+                        <form className="search" onSubmit={this.searchBooks}>
+                            <input className="searchText" type="text" value={this.state.value} onChange={this.handleChange} />
+                            <button type="submit" value="Submit" className="searchButton"><BsSearch size="1.5em" color="white" /> Search</button>
                         </form>
                         <BookCatalog books={this.state.bookResults} reserveBook={this.reserveBook} />
                     </div>

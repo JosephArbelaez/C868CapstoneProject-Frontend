@@ -1,6 +1,6 @@
 import React from 'react';
-const ChargeCard = ({chargeTotal}) => {
 
+const ChargeCard = ({chargeTotal}) => {
 
     return (
         <div class ="userCard">

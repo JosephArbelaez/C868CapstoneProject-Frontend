@@ -1,23 +1,17 @@
 import React, {Component } from 'react';
 import './App.css';
-
 import Page from './components/Page/Page';
-
-
-const initialState = {
-  page: "home"
-}
-
 
 class App extends Component {
 
   constructor() {
     super();
-    this.state = initialState;
+    this.state = {
+      page: "home"
+    };
   }
 
   pageChange = (page) => {
-    console.log(page);
     this.setState({page: page});
   }
 
@@ -27,14 +21,11 @@ class App extends Component {
     return (
       <div>
         <div className="App">
-          
           <Page page = {page} pageChange={this.pageChange}/>
-          
           </div>
       </div>
     );
   }
 }
-
 
 export default App;

@@ -8,16 +8,13 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 import { AiFillPrinter, AiFillPlusCircle } from "react-icons/ai";
 
-const Row = ({ id, type, price, description, person, removeCharge, handleShowEditCharge }) => (
+const Row = ({ id, type, price, description, person, removeCharge}) => (
   <tr>
     <td>{id}</td>
     <td>{type}</td>
     <td>${price}</td>
     <td>{description}</td>
     <td>{person.name}</td>
-    <td>
-      <a onClick={() => handleShowEditCharge(id, type, price, description)}><RiPencilFill /></a>
-    </td>
     <td>
       <a onClick={() => removeCharge(id)}><RiDeleteBin5Fill /></a>
     </td>
@@ -39,13 +36,12 @@ class ChargeTable extends Component {
       id: 0,
       type: "",
       price: 0.0,
-      description: "",
+      description: '',
       person: "",
       showAddCharge: false,
-      showEditCharge: false
+      message: false
     }
     this.handleShowAddCharge = this.handleShowAddCharge.bind(this);
-    this.handleShowEditCharge = this.handleShowEditCharge.bind(this);
     this.removeCharge = this.removeCharge.bind(this);
   }
 
@@ -56,65 +52,28 @@ class ChargeTable extends Component {
           data: res.data
         });
       })
-      console.log(this.state.data);
-      axios.get(`http://localhost:8080/api/v1/person/patron`)
+    console.log(this.state.data);
+    axios.get(`http://localhost:8080/api/v1/person/patron`)
       .then((res) => {
         this.setState({
           patronData: res.data,
         });
         console.log(this.state.patronData);
       })
-      
+
   }
 
   handleClose = () => {
     this.setState({
       showAddCharge: false,
-      showEditCharge: false
+      showEditCharge: false,
+      message: false
     })
   };
   handleShowAddCharge = () => {
     this.setState({
       showAddCharge: true
     })
-  };
-
-  handleShowEditCharge = (id, type, price, description) => {
-    this.setState({
-      id: id,
-      type: type,
-      price: price,
-      description: description,
-      showEditCharge: true
-    })
-  };
-
-  editCharge = () => {
-    var {id, type, price, description} = this.state;
-    var temp = this.state.data;
-    for (var i = 0; i < temp.length; i++) {
-      if (temp[i].id == id) {
-        temp[i].type = type;
-        temp[i].price = price;
-        temp[i].description = description;
-      }
-    }
-    this.setState({
-      data: temp
-    })
-    var bodyformData = new FormData();
-    bodyformData.append('file', this.state.file);
-
-    axios.put(
-      `http://localhost:8080/api/v1/charge/`, {
-      "id": id,
-      "type": type,
-      "price": price,
-      "description": description
-    }
-    ).then((response) => {
-      this.handleClose();
-    });
   };
 
   exportChargePDF = () => {
@@ -161,15 +120,17 @@ class ChargeTable extends Component {
   }
   addCharge = (event) => {
     event.preventDefault()
-    var { type, price, description, patronId} = this.state;
-    var date = new Date();
-    var dd = String(date.getDate()).padStart(2, '0');
-    var mm = String(date.getMonth() + 1).padStart(2, '0');
-    var yyyy = date.getFullYear();
 
-    date = yyyy + '-' + mm + '-' + dd;
-    var bodyformData = new FormData();
-    bodyformData.append('file', this.state.file);
+    var { title,type, price, description, patronId } = this.state;
+    if (title != '' && type != '' && price != 0 && price != '' && description != '') {
+      var date = new Date();
+      var dd = String(date.getDate()).padStart(2, '0');
+      var mm = String(date.getMonth() + 1).padStart(2, '0');
+      var yyyy = date.getFullYear();
+
+      date = yyyy + '-' + mm + '-' + dd;
+      var bodyformData = new FormData();
+      bodyformData.append('file', this.state.file);
       axios.post(
         `http://localhost:8080/api/v1/charge/${patronId}`, {
         "id": 0,
@@ -180,18 +141,23 @@ class ChargeTable extends Component {
       }
       ).then((response) => {
         var temp = this.state.data;
-        var json = { id: "In Progress", type: type, price: price, description: description, person: "In Progress"};
+        var json = { id: "In Progress", type: type, price: price, description: description, person: "In Progress" };
         temp.push(json);
-  
+
         this.setState(
           {
             showAddCharge: false,
             data: temp
           })
-          this.handleClose();
+        this.handleClose();
       }, (error) => {
         console.log(error);
       });
+    } else {
+      this.setState({
+        message: true
+      })
+    }
   }
   render() {
     const rows = this.state.data.map((rowData) => <Row removeCharge={this.removeCharge} handleShowEditCharge={this.handleShowEditCharge} {...rowData} />);
@@ -201,7 +167,7 @@ class ChargeTable extends Component {
         <h2>Charge</h2>
         <div className="tableIcons">
           <AiFillPrinter size="2em" color="navy" onClick={() => this.exportChargePDF()} />
-          <AiFillPlusCircle size="2em" color="navy" onClick={this.handleShowAddCharge}/>
+          <AiFillPlusCircle size="2em" color="navy" onClick={this.handleShowAddCharge} />
         </div>
         <table>
           <tr>
@@ -210,46 +176,10 @@ class ChargeTable extends Component {
             <th>Price</th>
             <th>Description</th>
             <th>Patron</th>
-            <th>Edit</th>
             <th>Remove</th>
           </tr>
           {rows}
         </table>
-        <Modal show={this.state.showEditCharge} onHide={this.handleClose} editCharge={this.editCharge}>
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Charge</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div>
-              <form>
-                <label>
-                  ID:
-                    <input type="text" readOnly={true} name="id" value={this.state.id} />
-                </label>
-                <label>
-                  Type:
-                    <input type="text" readOnly={false} name="type" value={this.state.type} onChange={e => this.setState({ type: e.target.value })} />
-                </label>
-                <label>
-                  Price:
-                    <input type="text" readOnly={false} name="author" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
-                </label>
-                <label>
-                  Description:
-                    <input type="text" readOnly={false} name="description" value={this.state.description} onChange={e => this.setState({ description: e.target.value })} />
-                </label>
-              </form>
-            </div>
-            </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleClose}>
-              Close
-                </Button>
-            <Button variant="primary" onClick={this.editCharge}>
-              Save Changes
-                </Button>
-          </Modal.Footer>
-        </Modal >
         <Modal show={this.state.showAddCharge} onHide={this.handleClose} addCharge={this.addCharge}>
           <Modal.Header closeButton>
             <Modal.Title>Add Charge</Modal.Title>
@@ -261,20 +191,22 @@ class ChargeTable extends Component {
                   Title:
                     <input type="text" readOnly={false} name="title" value={this.state.title} onChange={e => this.setState({ title: e.target.value })} />
                 </label>
+                <br />
                 <label>
                   Type:
-                    <select name = "type" readOnly={false} name="type" value={this.state.type} onChange={e => this.setState({ type: e.target.value })}>
-                      <option>Select Type</option>
-                      <option value="DamagedBook">Damaged Book</option>
-                      <option value="LostBook">Lost Book</option>
-                    </ select>
+                    <select name="type" readOnly={false} name="type" value={this.state.type} onChange={e => this.setState({ type: e.target.value })}>
+                    <option>Select Type</option>
+                    <option value="DamagedBook">Damaged Book</option>
+                    <option value="LostBook">Lost Book</option>
+                  </ select>
                 </label>
+                <br />
                 <label>
                   Patron:
-                    <select name = "type" readOnly={false} name="type" value={this.state.patronId} onChange={e => this.setState({ patronId: e.target.value })}>
+                    <select name="type" readOnly={false} name="type" value={this.state.patronId} onChange={e => this.setState({ patronId: e.target.value })}>
                     <option>Select Patron</option>
-                      {patrons}
-                    </ select>
+                    {patrons}
+                  </ select>
                 </label>
                 <label>
                   Price:
@@ -286,7 +218,10 @@ class ChargeTable extends Component {
                 </label>
               </form>
             </div>
-            </Modal.Body>
+            {
+              this.state.message == '' ? <div></div> : <p className="message">Invalid Data</p>
+            }
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.handleClose}>
               Close
