@@ -127,10 +127,10 @@ class Page extends Component {
                     <div>
                         <Home />
                         <Bar text={this.state.bar1} />
-                        <div className="newBookCard">
+                        {/* <div className="newBookCard">
                             <NewNonFiction />
                             <NewFiction />
-                        </div>
+                        </div> */}
                         <Bar text={this.state.bar2} />
                         <div className="galleryContainer">
                             <Gallery />
