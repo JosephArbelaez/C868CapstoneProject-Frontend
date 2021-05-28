@@ -29,30 +29,29 @@ class BookTableChecked extends Component {
   }
 
   exportBookCollectionPDF = () => {
-    console.log(this.props.books);
-    // let unit = "pt";
-    // let size = "A4";
-    // let orientation = "portrait";
+    let unit = "pt";
+    let size = "A4";
+    let orientation = "portrait";
 
-    // let marginLeft = 40;
-    // let doc = new jsPDF(orientation, unit, size);
+    let marginLeft = 40;
+    let doc = new jsPDF(orientation, unit, size);
 
-    // doc.setFontSize(15);
+    doc.setFontSize(15);
 
-    // let title = "My Awesome Report";
-    // let headers = [["isbn", "title", "author", "price", "Checkout Date"]];
+    let title = "My Awesome Report";
+    let headers = [["isbn", "title", "author", "price", "Checkout Date"]];
 
-    // let bookCollection = this.props.books.map(elt => [elt.isbn, elt.title, elt.author, elt.price, elt.checkoutDate]);
+    let bookCollection = this.props.books.map(elt => [elt.isbn, elt.title, elt.author, elt.price, elt.checkoutDate]);
 
-    // let content = {
-    //   startY: 50,
-    //   head: headers,
-    //   body: bookCollection
-    // };
+    let content = {
+      startY: 50,
+      head: headers,
+      body: bookCollection
+    };
 
-    // doc.text(title, marginLeft, 40);
-    // doc.autoTable(content);
-    // doc.save("report.pdf")
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("report.pdf")
   }
 
   render() {

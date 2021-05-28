@@ -50,7 +50,7 @@ class BookTableChecked extends Component {
   }
 
   componentDidMount = () => {
-    axios.get(`http://localhost:8080/api/v1/book/checked`)
+    axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/book/checked`)
       .then((res) => {
         this.setState({
           data: res.data,
@@ -104,7 +104,7 @@ class BookTableChecked extends Component {
       bodyformData.append('file', this.state.file);
 
       axios.put(
-        `http://localhost:8080/api/v1/book/`, {
+        `https://c868capstoneproject.herokuapp.com/api/v1/book/`, {
         "isbn": isbn,
         "title": title,
         "author": author,
@@ -139,7 +139,7 @@ class BookTableChecked extends Component {
           data: temp
         })
           element.status = ''
-          axios.put(`http://localhost:8080/api/v1/book/checkin`, {
+          axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/checkin`, {
               "isbn": element.isbn,
               "title": element.title,
               "author": element.author,

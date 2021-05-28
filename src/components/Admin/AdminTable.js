@@ -50,7 +50,7 @@ class AdminTable extends Component {
   }
 
   componentDidMount = () => {
-    axios.get(`http://localhost:8080/api/v1/person/admin`)
+    axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/person/admin`)
       .then((res) => {
         this.setState({
           data: res.data,
@@ -73,7 +73,7 @@ class AdminTable extends Component {
         data: temp
       })
 
-      axios.delete(`http://localhost:8080/api/v1/person/${userID}`)
+      axios.delete(`https://c868capstoneproject.herokuapp.com/api/v1/person/${userID}`)
     }
   }
 
@@ -95,7 +95,7 @@ class AdminTable extends Component {
       bodyformData.append('file', this.state.file);
 
       axios.put(
-        `http://localhost:8080/api/v1/person/admin`, {
+        `https://c868capstoneproject.herokuapp.com/api/v1/person/admin`, {
         "userID": userID,
         "name": name,
         "email": email
@@ -149,7 +149,7 @@ class AdminTable extends Component {
       if (name != '' && email != '' && file != '') {
         axios({
           method: "post",
-          url: "http://localhost:8080/storage/uploadFile",
+          url: "https://c868capstoneproject.herokuapp.com/storage/uploadFile",
           data: bodyformData,
           headers: { "Content-Type": "multipart/form-data" },
         }).then((res) => {
@@ -159,7 +159,7 @@ class AdminTable extends Component {
           var { url } = this.state;
 
           axios.post(
-            `http://localhost:8080/api/v1/person/admin`, {
+            `https://c868capstoneproject.herokuapp.com/api/v1/person/admin`, {
             "userID": 0,
             "name": name,
             "email": email,

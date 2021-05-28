@@ -55,7 +55,7 @@ class BookTableUnchecked extends Component {
   }
 
   componentDidMount = () => {
-    axios.get(`http://localhost:8080/api/v1/book/unchecked`)
+    axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/book/unchecked`)
       .then((res) => {
         this.setState({
           data: res.data,
@@ -110,7 +110,7 @@ class BookTableUnchecked extends Component {
       bodyformData.append('file', this.state.file);
 
       axios.put(
-        `http://localhost:8080/api/v1/book/`, {
+        `https://c868capstoneproject.herokuapp.com/api/v1/book/`, {
         "isbn": isbn,
         "title": title,
         "author": author,
@@ -144,7 +144,7 @@ class BookTableUnchecked extends Component {
       data: temp
     })
 
-    axios.delete(`http://localhost:8080/api/v1/book/${isbn}`)
+    axios.delete(`https://c868capstoneproject.herokuapp.com/api/v1/book/${isbn}`)
   }
 
   exportUncheckedBookPDF = () => {
@@ -191,7 +191,7 @@ class BookTableUnchecked extends Component {
     if (isbn != 0 && isbn != '' && title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != '') {
       axios({
         method: "post",
-        url: "http://localhost:8080/storage/uploadFile",
+        url: "https://c868capstoneproject.herokuapp.com/storage/uploadFile",
         data: bodyformData,
         headers: { "Content-Type": "multipart/form-data" },
       }).then((res) => {
@@ -200,7 +200,7 @@ class BookTableUnchecked extends Component {
         })
         const { url } = this.state;
         axios.post(
-          `http://localhost:8080/api/v1/book`, {
+          `https://c868capstoneproject.herokuapp.com/api/v1/book`, {
           "isbn": isbn,
           "title": title,
           "author": author,

@@ -30,7 +30,7 @@ class UserAccount extends Component {
     };
 
     componentDidMount() {
-        axios.get(`http://localhost:8080/api/v1/book`)
+        axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/book`)
             .then((res) => {
                 var temp = [];
 
@@ -50,7 +50,7 @@ class UserAccount extends Component {
                 });
             })
 
-        axios.get(`http://localhost:8080/api/v1/charge`)
+        axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/charge`)
             .then((res) => {
                 var temp = [];
                 var total = [];
@@ -73,7 +73,7 @@ class UserAccount extends Component {
                 })
             }
             )
-        axios.get(`http://localhost:8080/api/v1/book`)
+        axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/book`)
             .then((res) => {
                 var temp = [];
 
@@ -99,7 +99,7 @@ class UserAccount extends Component {
         event.preventDefault()
         var sString = this.state.value;
         axios.get(
-            `http://localhost:8080/api/v1/book/${sString}`
+            `https://c868capstoneproject.herokuapp.com/api/v1/book/${sString}`
         ).then(res => {
             var temp = res.data;
             for (var i = 0; i < res.data.length; i++) {
@@ -130,7 +130,7 @@ class UserAccount extends Component {
                 var yyyy = date.getFullYear().toString();
           
                 date = yyyy + '-' + mm + '-' + dd;
-                axios.put(`http://localhost:8080/api/v1/book/reserve/${this.props.userID}`, {
+                axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/reserve/${this.props.userID}`, {
                     "isbn": element.isbn,
                     "title": element.title,
                     "author": element.author,

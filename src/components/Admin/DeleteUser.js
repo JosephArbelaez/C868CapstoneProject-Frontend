@@ -36,7 +36,7 @@ class AddPerson extends Component {
 
         axios({
             method: "post",
-            url: "http://localhost:8080/storage/uploadFile",
+            url: "https://c868capstoneproject.herokuapp.com/storage/uploadFile",
             data: bodyformData,
             headers: {"Content-Type": "multipart/form-data"},
         }).then((res) => {
@@ -45,7 +45,7 @@ class AddPerson extends Component {
               })
               const {url} = this.state;
               axios.post(
-                `http://localhost:8080/api/v1/person/patron?cardNumber=${cardNumber}`, {
+                `https://c868capstoneproject.herokuapp.com/api/v1/person/patron?cardNumber=${cardNumber}`, {
                     "userID" : 0,
                     "name": name,
                     "email": email,

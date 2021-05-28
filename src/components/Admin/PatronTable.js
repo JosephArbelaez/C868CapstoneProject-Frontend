@@ -52,7 +52,7 @@ class PatronTable extends Component {
   }
 
   componentDidMount = () => {
-    axios.get(`http://localhost:8080/api/v1/person/patron`)
+    axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/person/patron`)
       .then((res) => {
         this.setState({
           data: res.data,
@@ -62,7 +62,7 @@ class PatronTable extends Component {
       })
 
     axios.get(
-      `http://localhost:8080/api/v1/person/cardNumber`
+      `https://c868capstoneproject.herokuapp.com/api/v1/person/cardNumber`
     ).then(res => {
       var used = true;
       while (used) {
@@ -93,7 +93,7 @@ class PatronTable extends Component {
       data: temp
     })
 
-    axios.delete(`http://localhost:8080/api/v1/person/${userID}`)
+    axios.delete(`https://c868capstoneproject.herokuapp.com/api/v1/person/${userID}`)
   }
   editPatron = () => {
     var { userID, name, email } = this.state;
@@ -113,7 +113,7 @@ class PatronTable extends Component {
       bodyformData.append('file', this.state.file);
 
       axios.put(
-        `http://localhost:8080/api/v1/person/patron`, {
+        `https://c868capstoneproject.herokuapp.com/api/v1/person/patron`, {
         "userID": userID,
         "name": name,
         "email": email
@@ -166,7 +166,7 @@ class PatronTable extends Component {
       if (name != '' && email != '' && file != '') {
         axios({
           method: "post",
-          url: "http://localhost:8080/storage/uploadFile",
+          url: "https://c868capstoneproject.herokuapp.com/storage/uploadFile",
           data: bodyformData,
           headers: { "Content-Type": "multipart/form-data" },
         }).then((res) => {
@@ -176,7 +176,7 @@ class PatronTable extends Component {
           var { url } = this.state;
 
           axios.post(
-            `http://localhost:8080/api/v1/person/patron`, {
+            `https://c868capstoneproject.herokuapp.com/api/v1/person/patron`, {
             "userID": 0,
             "name": name,
             "email": email,
@@ -199,7 +199,7 @@ class PatronTable extends Component {
               file: ''
             })
             axios.get(
-              `http://localhost:8080/api/v1/person/cardNumber`
+              `https://c868capstoneproject.herokuapp.com/api/v1/person/cardNumber`
             ).then(res => {
               var used = true;
               while (used) {

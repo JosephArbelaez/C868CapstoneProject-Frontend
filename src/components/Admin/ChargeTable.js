@@ -46,14 +46,14 @@ class ChargeTable extends Component {
   }
 
   componentDidMount() {
-    axios.get(`http://localhost:8080/api/v1/charge`)
+    axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/charge`)
       .then((res) => {
         this.setState({
           data: res.data
         });
       })
     console.log(this.state.data);
-    axios.get(`http://localhost:8080/api/v1/person/patron`)
+    axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/person/patron`)
       .then((res) => {
         this.setState({
           patronData: res.data,
@@ -116,7 +116,7 @@ class ChargeTable extends Component {
       data: temp
     })
 
-    axios.delete(`http://localhost:8080/api/v1/charge/${id}`)
+    axios.delete(`https://c868capstoneproject.herokuapp.com/api/v1/charge/${id}`)
   }
   addCharge = (event) => {
     event.preventDefault()
@@ -132,7 +132,7 @@ class ChargeTable extends Component {
       var bodyformData = new FormData();
       bodyformData.append('file', this.state.file);
       axios.post(
-        `http://localhost:8080/api/v1/charge/${patronId}`, {
+        `https://c868capstoneproject.herokuapp.com/api/v1/charge/${patronId}`, {
         "id": 0,
         "type": type,
         "price": price,

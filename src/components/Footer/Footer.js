@@ -8,7 +8,6 @@ const Footer = () => {
         <p>Library Hours: 10:00 AM - 5:00 PM</p>
         <p>Support Hours: 8:00 AM - 7:00 PM</p>
       </div>
-      {/* <img className="logo" src='https://c868finalproject.s3.us-east-2.amazonaws.com/logo.jpg'></img> */}
       <div className="footerColumn">
         <p>Library Location</p>
         <p>123 South Main Street</p>
