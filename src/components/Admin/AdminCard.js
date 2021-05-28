@@ -1,16 +1,13 @@
 import React from 'react';
 import {FaUser} from 'react-icons/fa';
 import { AiOutlineNumber } from 'react-icons/ai';
-import { HiOutlineMail} from 'react-icons/hi';
-
-
 
 const AdminCard = ({ userID, name, url}) => {
 
 
     return (
         <div className ="userCard">
-            <img src={url} class="userCardImage"></img>
+            <img src={url} class="userCardImage" alt="profile"></img>
             
             <div className ="userCardRow">
                 <div className = "userCardIcon">

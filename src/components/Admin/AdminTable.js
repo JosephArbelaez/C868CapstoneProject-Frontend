@@ -16,7 +16,7 @@ const Row = ({ userID, name, email, activated, handleShowEditAdmin, remove }) =>
       activated ? <td>true</td> : <td>false</td>
     }
     <td>
-      {userID == "In Progress" ? <div></div> :
+      {userID === "In Progress" ? <div></div> :
         <a onClick={() => handleShowEditAdmin(userID, name, email)}><RiPencilFill /></a>
       }
     </td>
