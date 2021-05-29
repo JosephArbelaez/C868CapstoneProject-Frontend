@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable'
 import { AiFillPrinter } from "react-icons/ai";
 
-const Row = ({ isbn, title, author, price, checkoutDate }) => (
+const Row = ({ isbn, title, author, price, checkoutDate}) => (
   <tr>
     <td>{isbn}</td>
     <td>{title}</td>
@@ -55,7 +55,7 @@ class BookTableChecked extends Component {
   }
 
   render() {
-    const rows = this.props.books.map((rowData) => <Row {...rowData} />);
+    const rows = this.props.books.map((rowData) => <Row {...rowData}/>);
 
     return (
       <div className="tableContainer">

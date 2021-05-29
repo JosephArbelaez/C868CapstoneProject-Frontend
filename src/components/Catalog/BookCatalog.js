@@ -1,4 +1,3 @@
-
 import React from 'react';
 import BookCard from './BookCard';
 
@@ -13,7 +12,6 @@ const BookCatalog = ({ books, reserveBook }) => {
             <h2 className="bookCatalogTitle">Book Catalog</h2>
             {
                 books.map((book, i) => {
-                    console.log(book);
                     return (
                         <BookCard 
                             key = {i} 

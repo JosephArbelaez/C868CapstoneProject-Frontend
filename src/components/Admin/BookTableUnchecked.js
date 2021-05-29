@@ -4,7 +4,6 @@ import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Dropzone from 'react-dropzone';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 import { AiFillPrinter, AiFillPlusCircle } from "react-icons/ai";
@@ -47,8 +46,11 @@ class BookTableUnchecked extends Component {
       showAddBook: false,
       showEditBook: false,
       message: false,
-      file: ''
+      file: '',
+      fileImg: ''
     }
+
+    this.handleChange = this.handleChange.bind(this);
     this.handleShowAddBook = this.handleShowAddBook.bind(this);
     this.handleShowEditBook = this.handleShowEditBook.bind(this);
     this.removeBook = this.removeBook.bind(this);
@@ -67,12 +69,33 @@ class BookTableUnchecked extends Component {
     this.setState({
       showAddBook: false,
       showEditBook: false,
-      message: false
+      message: false,
+      isbn: 0,
+      title: "",
+      author: "",
+      description: "",
+      pageCount: 0,
+      price: 0.0,
+      genre: "",
+      person: "",
+      file: '',
+      fileImg: ''
     })
   };
   handleShowAddBook = () => {
     this.setState({
-      showAddBook: true
+      showAddBook: true,
+      message: false,
+      isbn: 0,
+      title: "",
+      author: "",
+      description: "",
+      pageCount: 0,
+      price: 0.0,
+      genre: "",
+      person: "",
+      file: '',
+      fileImg: ''
     })
   };
 
@@ -90,8 +113,13 @@ class BookTableUnchecked extends Component {
   };
 
   editBook = () => {
-    var { isbn, title, author, description, pageCount, price, genre, file } = this.state;
-    if (title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != '' && file != '') {
+    var { isbn, title, author, description, pageCount, price, genre } = this.state;
+    if (title != '' 
+        && author != '' 
+        && description != '' 
+        && pageCount > 0 && pageCount != ''
+        && price > 0 && price < 999 && price != '' && this.priceCheck(price)
+        && genre != '') {
       var temp = this.state.data;
       for (var i = 0; i < temp.length; i++) {
         if (temp[i].isbn == isbn) {
@@ -182,13 +210,28 @@ class BookTableUnchecked extends Component {
     console.log(this.state.file);
   }
 
+  priceCheck = (num) => {
+    if(((num*100) - Math.floor(num*100)) == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   addBook = (event) => {
     event.preventDefault()
     var bodyformData = new FormData();
     bodyformData.append('file', this.state.file);
 
-    var { isbn, title, author, description, pageCount, price, genre } = this.state;
-    if (isbn != 0 && isbn != '' && title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != '') {
+    var { isbn, title, author, description, pageCount, price, genre, file } = this.state;
+    if (isbn != 0 && isbn != '' 
+          && title != '' 
+          && author != '' 
+          && description != '' 
+          && pageCount > 0 && pageCount != '' && this.pageCheck(pageCount)
+          && price > 0 && price < 999 && price != '' && this.priceCheck(price)
+          && genre != ''
+          && file != '') {
       axios({
         method: "post",
         url: "https://c868capstoneproject.herokuapp.com/storage/uploadFile",
@@ -231,28 +274,24 @@ class BookTableUnchecked extends Component {
       })
     }
   }
+
+  handleChange(event) {
+    this.setState({
+      file: event.target.files[0],
+      fileImg: URL.createObjectURL(event.target.files[0])
+    })
+  }
+
+  pageCheck = (num) => {
+    if(((num) - Math.floor(num)) == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   render() {
     const rows = this.state.data.map((rowData) => <Row remove={this.remove} removeBook={this.removeBook} handleShowEditBook={this.handleShowEditBook} {...rowData} />);
-    const baseStyle = {
-      width: 300,
-      height: 100,
-      borderWidth: 2,
-      borderColor: '#666',
-      borderStyle: 'solid',
-      margin: '5px',
-    };
-    const activeStyle = {
-      borderStyle: 'solid',
-      borderColor: '#6c6',
-      backgroundColor: '#eee',
-      alignContent: 'center'
-    };
-    const rejectStyle = {
-      borderStyle: 'solid',
-      borderColor: '#c66',
-      backgroundColor: '#eee',
-      alignContent: 'center'
-    };
     return (
       <div className="tableContainer">
         <h2>Unchecked Books</h2>
@@ -296,11 +335,11 @@ class BookTableUnchecked extends Component {
                 </label>
                 <label>
                   Page Count:
-                    <input type="text" readOnly={false} name="pageCount" value={this.state.pageCount} onChange={e => this.setState({ pageCount: e.target.value })} />
+                    <input type="number" step="1" min="0" readOnly={false} name="pageCount" value={this.state.pageCount} onChange={e => this.setState({ pageCount: e.target.value })} />
                 </label>
                 <label>
                   Price:
-                    <input type="text" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
+                    <input type="number" step=".01" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
                 </label>
                 <label>
                   Genre:
@@ -346,36 +385,20 @@ class BookTableUnchecked extends Component {
                 </label>
                 <label>
                   Page Count:
-                    <input type="text" readOnly={false} name="pageCount" value={this.state.pageCount} onChange={e => this.setState({ pageCount: e.target.value })} />
+                    <input type="number" step="1" min="0" readOnly={false} name="pageCount" value={this.state.pageCount} onChange={e => this.setState({ pageCount: e.target.value })} />
                 </label>
                 <label>
                   Price:
-                    <input type="text" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
+                    <input type="number" step=".01" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
                 </label>
                 <label>
                   Genre:
                     <input type="text" readOnly={false} name="genre" value={this.state.genre} onChange={e => this.setState({ genre: e.target.value })} />
                 </label>
-                <Dropzone className="dropzone" onDrop={this.handleOnDrop} multiple={false}>
-                  {({ getRootProps, getInputProps, isDragActive, isDragReject }) => {
-                    let styles = { ...baseStyle };
-                    styles = isDragActive ? { ...styles, ...activeStyle } : styles
-                    styles = isDragReject ? { ...styles, ...rejectStyle } : styles
-                    return (
-                      <div
-                        {...getRootProps()}
-                        style={styles}
-                      >
-                        <input {...getInputProps()} />
-                        {
-                          isDragActive ?
-                            <p>Drop files here</p> :
-                            <p>Add Book Picture</p>
-                        }
-                      </div>
-                    )
-                  }}
-                </Dropzone>
+                <input type="file" onChange={this.handleChange}/>
+                  <div >
+                  <img className = "thumbnail" src={this.state.fileImg}/>
+                  </div>
               </form>
             </div>
             {

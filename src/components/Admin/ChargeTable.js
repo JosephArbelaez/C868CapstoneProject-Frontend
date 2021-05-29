@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,7 +8,7 @@ import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 import { AiFillPrinter, AiFillPlusCircle } from "react-icons/ai";
 
-const Row = ({ id, type, price, description, person, removeCharge}) => (
+const Row = ({ id, type, price, description, person, removeCharge }) => (
   <tr>
     <td>{id}</td>
     <td>{type}</td>
@@ -67,14 +67,33 @@ class ChargeTable extends Component {
     this.setState({
       showAddCharge: false,
       showEditCharge: false,
-      message: false
+      message: false,
+      id: 0,
+      type: "",
+      price: 0.0,
+      description: '',
+      person: ""
     })
   };
   handleShowAddCharge = () => {
     this.setState({
-      showAddCharge: true
+      showAddCharge: true,
+      message: false,
+      id: 0,
+      type: "",
+      price: 0.0,
+      description: '',
+      person: ""
     })
   };
+
+  priceCheck = (num) => {
+    if (((num * 100) - Math.floor(num * 100)) == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   exportChargePDF = () => {
     let unit = "pt";
@@ -91,7 +110,6 @@ class ChargeTable extends Component {
 
     let data = this.state.data.map(elt => [elt.id, elt.type, elt.price, elt.description, elt.person.name]);
 
-    console.log(data);
     let content = {
       startY: 50,
       head: headers,
@@ -121,8 +139,11 @@ class ChargeTable extends Component {
   addCharge = (event) => {
     event.preventDefault()
 
-    var { title,type, price, description, patronId } = this.state;
-    if (title != '' && type != '' && price != 0 && price != '' && description != '') {
+    var { title, type, price, description, patronId } = this.state;
+    if (title != ''
+      && type != '' && type != 'Select Type'
+      && price > 0 && price < 999 && price != '' && this.priceCheck(price)
+      && description != '') {
       var date = new Date();
       var dd = String(date.getDate()).padStart(2, '0');
       var mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -141,7 +162,7 @@ class ChargeTable extends Component {
       }
       ).then((response) => {
         var temp = this.state.data;
-        var json = { id: "In Progress", type: type, price: price, description: description, person: "In Progress" };
+        var json = { id: "In Progress", type: type, price: price, description: description, person: { name: "In Progress" } };
         temp.push(json);
 
         this.setState(
@@ -210,7 +231,7 @@ class ChargeTable extends Component {
                 </label>
                 <label>
                   Price:
-                    <input type="text" readOnly={false} name="author" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
+                    <input type="number" step=".01" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
                 </label>
                 <label>
                   Description:

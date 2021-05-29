@@ -7,12 +7,12 @@ class Login extends Component {
 
         this.state = {
             email: "",
-            password: ""
+            password: "",
+            message: false
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.login = this.login.bind(this);
-        this.toRegistration = this.toRegistration.bind(this);
     }
 
     handleChange(event) {
@@ -29,13 +29,13 @@ class Login extends Component {
         ).then(res => {
             if(res.data.userID){
                 this.props.login(res.data.userID, res.data.name, res.data.cardNumber, res.data.url);
+            } else {
+                this.setState({
+                    message:true
+                })
             }
-        });
-    }
+});}
 
-    toRegistration = () => {
-        this.props.toRegistration();
-    }
     render() {
         return (
             <div  className="loginCard" onSubmit={this.login} >
@@ -48,8 +48,10 @@ class Login extends Component {
                         Password:   
                         <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
                     </label>
+                    {
+                        this.state.message == true ? <p className="message">Invalid Credentials</p> : <div></div>
+                    }
                     <input type="submit" value="Login" />
-                    <button className="registerButton" onClick={this.toRegistration}>Register</button>
                 </form>
                 
             </div>

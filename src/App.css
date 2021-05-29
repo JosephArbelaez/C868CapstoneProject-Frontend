@@ -37,7 +37,9 @@
     transform: rotate(360deg);
   }
 }
-
+.thumbnail {
+  width: 100px;
+}
 
 /* Navbar */
 .navbar {
@@ -190,6 +192,19 @@ input[type=text]:focus {
   background-color: lightblue;
 }
 
+input[type=number]{
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type=number]:focus {
+  background-color: lightblue;
+}
+
 input[type=password]{
   width: 100%;
   padding: 12px 20px;
@@ -229,6 +244,20 @@ input[type=submit]:hover {
   background-color: #370b9c;
 }
 
+input[type=email] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=email]:hover {
+  background-color: lightblue;
+}
+
 .registerButton{
   width: 100%;
   background-color: #210070;
@@ -244,18 +273,28 @@ input[type=submit]:hover {
   background-color: #370b9c;
 }
 
-.registrationCard{
+.registrationPage{ 
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.registrationCard{
+  width: 60%;
   margin-top: 5%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .registrationForm{
+  width: 60%;
   padding: 3%;
   box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,0.19);
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
 }
 /*** USERS ***/
 .userAccountPage{
@@ -394,6 +433,7 @@ table th {
   justify-content: start;
   align-items: flex-start;
   padding: 0%;
+  min-width: 60%;
 }
 
 .bookCardText{
@@ -418,6 +458,7 @@ input:read-only {
   height : 20%;
   border : 1px solid black;
 }
+
 .search {
   display: flex;
   justify-content: end;
@@ -473,3 +514,4 @@ input:read-only {
 .message{
   color: red;
 }
+

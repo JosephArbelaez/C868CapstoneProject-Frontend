@@ -73,33 +73,13 @@ class UserAccount extends Component {
                 })
             }
             )
-        axios.get(`https://c868capstoneproject.herokuapp.com/api/v1/book`)
-            .then((res) => {
-                var temp = [];
-
-                for (var i = 0; i < res.data.length; i++) {
-                    res.data[i].title = (res.data[i].title.charAt(0).toUpperCase() + res.data[i].title.slice(1));
-                    if (res.data[i].person) {
-                        if (res.data[i].person.userID == this.props.userID) {
-                            temp.push(res.data[i]);
-                        }
-                    }
-                }
-
-                this.setState({
-                    books: res.data,
-                    bookResults: res.data,
-                    bookCollection: temp
-                });
-            })
-
     }
 
     searchBooks = (event) => {
         event.preventDefault()
         var sString = this.state.value;
         axios.get(
-            `https://c868capstoneproject.herokuapp.com/api/v1/book/${sString}`
+            `https://c868capstoneproject.herokuapp.com/api/v1/book/search/${sString}`
         ).then(res => {
             var temp = res.data;
             for (var i = 0; i < res.data.length; i++) {
@@ -121,39 +101,26 @@ class UserAccount extends Component {
     }
 
     reserveBook = (isbn) => {
-        this.state.books.forEach((element) => {
-            if (element.isbn == isbn) {
-                element.status = "reserved"
+        
+        for(var i = 0; i < this.state.books.length; i++){
+            if (this.state.books[i].isbn == isbn){
                 var date = new Date();
-                var dd = String(date.getDate()).padStart(2, '0').toString();
-                var mm = String(date.getMonth() + 1).padStart(2, '0').toString();
-                var yyyy = date.getFullYear().toString();
-          
+                var dd = String(date.getDate()).padStart(2, '0');
+                var mm = String(date.getMonth() + 1).padStart(2, '0');
+                var yyyy = date.getFullYear();
                 date = yyyy + '-' + mm + '-' + dd;
-                axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/reserve/${this.props.userID}`, {
-                    "isbn": element.isbn,
-                    "title": element.title,
-                    "author": element.author,
-                    "description": element.description,
-                    "pageCount": element.pageCount,
-                    "price": element.price,
-                    "status": element.status,
-                    "genre": element.genre,
-                    "url": element.url,
-                    "person_id":this.props.userID
-                }
-                ).then((response) => {
-                    console.log(response);
-                    var temp = this.state.bookCollection;
-                    temp.push({isbn:element.isbn, title: element.title, author: element.author, price: element.price, checkoutDate: date})
-                    this.setState({
-                        bookCollection: temp
-                    })
-                }, (error) => {
-                    console.log(error);
-                });
+                var temp = this.state.books;
+                var bookCollectionTemp = this.state.bookCollection;
+                temp[i].status = "Reserved";
+                temp[i].checkoutDate = date;
+                bookCollectionTemp.push(temp[i]);
+                this.setState({
+                    books: temp,
+                    bookCollection: bookCollectionTemp
+                })
+                axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/reserve/${this.props.userID}/${isbn}`);
             }
-        })
+        }
     }
     renderSwitch = () => {
         switch (this.state.tab) {

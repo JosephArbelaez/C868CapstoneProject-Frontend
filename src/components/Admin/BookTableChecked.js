@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { RiPencilFill} from "react-icons/ri";
+import { RiPencilFill } from "react-icons/ri";
 import { GrReturn } from "react-icons/gr";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -42,8 +42,11 @@ class BookTableChecked extends Component {
       genre: "",
       person: "",
       showEditBook: false,
-      message: false
+      message: false,
+      file: '',
+      fileImg: ''
     }
+
     this.handleShowEditBook = this.handleShowEditBook.bind(this);
     this.exportCheckedBookPDF = this.exportCheckedBookPDF.bind(this)
     this.checkInBook = this.checkInBook.bind(this);
@@ -62,12 +65,17 @@ class BookTableChecked extends Component {
     this.setState({
       showAddBook: false,
       showEditBook: false,
-      message: false
-    })
-  };
-  handleShowAddBook = () => {
-    this.setState({
-      showAddBook: true
+      message: false,
+      isbn: 0,
+      title: "",
+      author: "",
+      description: "",
+      pageCount: 0,
+      price: 0.0,
+      genre: "",
+      person: "",
+      file: '',
+      fileImg: ''
     })
   };
 
@@ -85,7 +93,13 @@ class BookTableChecked extends Component {
   };
   editBook = () => {
     var { isbn, title, author, description, pageCount, price, genre } = this.state;
-    if (title != '' && author != '' && description != '' && pageCount != 0 && pageCount != '' && price != 0 && price != '' && genre != ''){
+    console.log(isbn + " " + title + " " + author + " " + description + " " + pageCount + " " + price + " " + genre);
+    if (title != ''
+      && author != ''
+      && description != ''
+      && pageCount > 0 && pageCount != '' && this.pageCheck(pageCount)
+      && price > 0 && price < 999 && price != '' && this.priceCheck(price)
+      && genre != '') {
       var temp = this.state.data;
       for (var i = 0; i < temp.length; i++) {
         if (temp[i].isbn == isbn) {
@@ -134,25 +148,25 @@ class BookTableChecked extends Component {
             temp.splice(i, 1);
           }
         }
-    
+
         this.setState({
           data: temp
         })
-          element.status = ''
-          axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/checkin`, {
-              "isbn": element.isbn,
-              "title": element.title,
-              "author": element.author,
-              "description": element.description,
-              "pageCount": element.pageCount,
-              "price": element.price,
-              "status": '',
-              "genre": element.genre,
-              "url": element.url
-          }
-          )
+        element.status = ''
+        axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/checkin`, {
+          "isbn": element.isbn,
+          "title": element.title,
+          "author": element.author,
+          "description": element.description,
+          "pageCount": element.pageCount,
+          "price": element.price,
+          "status": '',
+          "genre": element.genre,
+          "url": element.url
+        }
+        )
       }
-  })
+    })
   }
 
   exportCheckedBookPDF = () => {
@@ -181,7 +195,21 @@ class BookTableChecked extends Component {
     doc.save("report.pdf")
   }
 
+  priceCheck = (num) => {
+    if (((num * 100) - Math.floor(num * 100)) == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
+  pageCheck = (num) => {
+    if (((num) - Math.floor(num)) == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   render() {
     const rows = this.state.data.map((rowData) => <Row checkInBook={this.checkInBook} handleShowEditBook={this.handleShowEditBook} {...rowData} />);
@@ -229,11 +257,11 @@ class BookTableChecked extends Component {
                 </label>
                 <label>
                   Page Count:
-                    <input type="text" readOnly={false} name="pageCount" value={this.state.pageCount} onChange={e => this.setState({ pageCount: e.target.value })} />
+                    <input type="number" step="1" min="0" readOnly={false} name="pageCount" value={this.state.pageCount} onChange={e => this.setState({ pageCount: e.target.value })} />
                 </label>
                 <label>
                   Price:
-                    <input type="text" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
+                    <input type="number" step=".01" readOnly={false} name="price" value={this.state.price} onChange={e => this.setState({ price: e.target.value })} />
                 </label>
                 <label>
                   Genre:

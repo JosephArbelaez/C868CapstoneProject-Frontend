@@ -13,9 +13,11 @@ const BookCard = ({ isbn, title, author, description, pageCount, price, genre, s
                 <p claclassNamess = "bookCardText"><b>Page Count: </b>{pageCount} pages</p>
                 <p className = "bookCardText"><b>Price: </b>${price.toFixed(2)}</p>
                 <p className = "bookCardText"><b>Genre: </b>{genre}</p>
-                <p className = "bookCardText"><b>Status: </b>{status}</p>
-                <button className="reserveButton" onClick={() => reserveBook(isbn)}>Reserve</button>
-            </div>
+                {status == null ? <p><b>Status: </b>Available</p> :
+                <p className = "bookCardText"><b>Status: </b>{status}</p>}
+                {status == "Reserved" ? <div></div> : 
+                    status == "Checked" ? <div></div> : <button className="reserveButton" onClick={() => reserveBook(isbn)}>Reserve</button>}
+                    </div>
         </div>
     );
 }

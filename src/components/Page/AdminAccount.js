@@ -1,9 +1,6 @@
-import axios from 'axios';
 import React, { Component } from 'react';
 import AdminCard from '../Admin/AdminCard';
 import Tab from './Tab';
-import { jsPDF } from "jspdf";
-import 'jspdf-autotable'
 
 class AdminAccount extends Component {
     constructor(props) {

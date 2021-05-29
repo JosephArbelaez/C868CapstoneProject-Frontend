@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 const Navbar = ({ pageChange, loginText }) => {
   return (
@@ -9,9 +8,5 @@ const Navbar = ({ pageChange, loginText }) => {
     </div>
   );
 }
-
-Navbar.propTypes = {};
-
-Navbar.defaultProps = {};
 
 export default Navbar;

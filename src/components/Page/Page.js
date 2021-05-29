@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import AdminAccount from './AdminAccount';
 import Login from './Login';
 import UserAccount from './UserAccount';
-import Registration from './Registration';
 import Home from '../Page/Home';
 import Navbar from '../Navbar/Navbar';
 import NewNonFiction from './NewNonFiction';
@@ -44,16 +43,8 @@ class Page extends Component {
         }
     }
 
-    toRegistration = () => {
-        this.props.pageChange('registration');
-    }
-
     toLogin = () => {
         this.props.pageChange('login');
-    }
-
-    toPhoto = () => {
-        this.props.pageChange('photo');
     }
 
     changeName = (name) => {
@@ -74,7 +65,7 @@ class Page extends Component {
                             cardNumber={cardNumber}
                             url={url}
                             login={this.login}
-                            toRegistration={this.toRegistration} />
+                            />
                     </div>
                 )
             case 'userAccount':
@@ -95,14 +86,6 @@ class Page extends Component {
                         name={name}
                         userID={userID}
                         url={url} />
-                )
-
-            case 'registration':
-                return (
-                    <div>
-                        <Registration
-                            toLogin={this.toLogin} />
-                    </div>
                 )
 
             case 'home':
