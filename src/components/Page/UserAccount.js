@@ -77,7 +77,9 @@ class UserAccount extends Component {
 
     searchBooks = (event) => {
         event.preventDefault()
+        
         var sString = this.state.value;
+        if(sString != ''){
         axios.get(
             `https://c868capstoneproject.herokuapp.com/api/v1/book/search/${sString}`
         ).then(res => {
@@ -89,6 +91,11 @@ class UserAccount extends Component {
                 bookResults: res.data
             })
         });
+    } else {
+        this.setState({
+            bookResults: this.state.books
+        })
+    }
     }
     handleChange(event) {
         this.setState({ value: event.target.value });
