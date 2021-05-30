@@ -123,7 +123,8 @@ class UserAccount extends Component {
                 bookCollectionTemp.push(temp[i]);
                 this.setState({
                     books: temp,
-                    bookCollection: bookCollectionTemp
+                    bookCollection: bookCollectionTemp,
+                    bookResults: this.state.books
                 })
                 axios.put(`https://c868capstoneproject.herokuapp.com/api/v1/book/reserve/${this.props.userID}/${isbn}`);
             }
